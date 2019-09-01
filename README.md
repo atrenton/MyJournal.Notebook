@@ -13,7 +13,7 @@ Follow me on Twitter for updates and general questions.<br />
 <table hspace="25">
 	<tr>
 		<th scope="row">
-			<img src="./blob/master/docs/journal.png" alt="journal" />
+			<img src="docs/journal.png" alt="journal" />
 		</th>
 		<td>With one click of a button, this add-in
 		<br />creates a notebook on local storage
@@ -42,7 +42,7 @@ Follow me on Twitter for updates and general questions.<br />
 	<tr>
 		<th scope="row">License</th>
 		<td>
-			<a href="./blob/master/LICENSE.txt">Microsoft Public License (MS-PL)</a>
+			<a href="LICENSE.txt">Microsoft Public License (MS-PL)</a>
 		</td>
 	</tr>
 	<tr />
