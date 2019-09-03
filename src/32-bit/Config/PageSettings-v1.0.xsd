@@ -1,0 +1,250 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+  xmlns:tns="urn:MyJournal-Notebook-Config:PageSettings-v1.0"
+  targetNamespace="urn:MyJournal-Notebook-Config:PageSettings-v1.0"
+  elementFormDefault="qualified">
+  <!-- PageColorEnum -->
+  <xs:simpleType name="PageColorEnum">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">Page body color</xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:token">
+      <xs:enumeration value="#EDF5FE">
+        <xs:annotation>
+          <xs:documentation xml:lang="en">Blue</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="#FFFADF">
+        <xs:annotation>
+          <xs:documentation xml:lang="en">Yellow</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="#ECF0E5">
+        <xs:annotation>
+          <xs:documentation xml:lang="en">Green</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="#FFEEEF">
+        <xs:annotation>
+          <xs:documentation xml:lang="en">Red</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="#F3E9FF">
+        <xs:annotation>
+          <xs:documentation xml:lang="en">Purple</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="#E5EFEB">
+        <xs:annotation>
+          <xs:documentation xml:lang="en">Cyan</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="#FBF2E1">
+        <xs:annotation>
+          <xs:documentation xml:lang="en">Orange</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="#FBEDF6">
+        <xs:annotation>
+          <xs:documentation xml:lang="en">Magenta</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="#E5EDF3">
+        <xs:annotation>
+          <xs:documentation xml:lang="en">Blue Mist</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="#E8E3EB">
+        <xs:annotation>
+          <xs:documentation xml:lang="en">Purple Mist</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="#F9F4E7">
+        <xs:annotation>
+          <xs:documentation xml:lang="en">Tan</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="#FDFDDD">
+        <xs:annotation>
+          <xs:documentation xml:lang="en">Lemon</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="#ECF9E5">
+        <xs:annotation>
+          <xs:documentation xml:lang="en">Apple</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="#D4F9F2">
+        <xs:annotation>
+          <xs:documentation xml:lang="en">Teal</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="#EFDEDE">
+        <xs:annotation>
+          <xs:documentation xml:lang="en">Red Chalk</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="#E9E9ED">
+        <xs:annotation>
+          <xs:documentation xml:lang="en">Silver</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="automatic">
+        <xs:annotation>
+          <xs:documentation xml:lang="en">&lt;None&gt;</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+    </xs:restriction>
+  </xs:simpleType>
+  <!-- PageTitleEnum -->
+  <xs:simpleType name="PageTitleEnum">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">Page title</xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:token">
+      <xs:enumeration value="dd-MM-yyyy">
+        <xs:annotation>
+          <xs:documentation xml:lang="en">
+            Dash separated date format: dd-mm-yyyy
+          </xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="MM-dd-yyyy">
+        <xs:annotation>
+          <xs:documentation xml:lang="en">
+            Dash separated date format: mm-dd-yyyy
+          </xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="yyyy-MM-dd">
+        <xs:annotation>
+          <xs:documentation xml:lang="en">
+            Dash separated date format: yyyy-mm-dd
+          </xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="dd/MM/yyyy">
+        <xs:annotation>
+          <xs:documentation xml:lang="en">
+            Slash separated date format: dd/mm/yyyy
+          </xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="MM/dd/yyyy">
+        <xs:annotation>
+          <xs:documentation xml:lang="en">
+            Slash separated date format: mm/dd/yyyy
+          </xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="yyyy/MM/dd">
+        <xs:annotation>
+          <xs:documentation xml:lang="en">
+            Slash separated date format: yyyy/mm/dd
+          </xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="ddd d">
+        <xs:annotation>
+          <xs:documentation xml:lang="en">
+            Day of month short format: ddd dd
+          </xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="dddd d">
+        <xs:annotation>
+          <xs:documentation xml:lang="en">
+            Day of month long format: dddd dd
+          </xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="MMMM d">
+        <xs:annotation>
+          <xs:documentation xml:lang="en">
+            Day of month format: mmmm dd
+          </xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+    </xs:restriction>
+  </xs:simpleType>
+  <!-- RuleLinesColorEnum -->
+  <xs:simpleType name="RuleLinesColorEnum">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">Rule lines color</xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:token">
+      <xs:enumeration value="#CAEBFD">
+        <xs:annotation>
+          <xs:documentation xml:lang="en">Light Blue</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+    </xs:restriction>
+  </xs:simpleType>
+  <!-- RuleLinesMarginColorEnum -->
+  <xs:simpleType name="RuleLinesMarginColorEnum">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">Rule lines margin color</xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:token">
+      <xs:enumeration value="#FF5050">
+      <xs:annotation>
+        <xs:documentation xml:lang="en">Red</xs:documentation>
+      </xs:annotation>
+      </xs:enumeration>
+    </xs:restriction>
+  </xs:simpleType>
+  <!-- RuleLinesSpacingEnum -->
+  <xs:simpleType name="RuleLinesSpacingEnum">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">Rule lines spacing</xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:token">
+      <xs:enumeration value="13.42771530151367">
+      <xs:annotation>
+        <xs:documentation xml:lang="en">Narrow Ruled</xs:documentation>
+      </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="23.76000022888184">
+      <xs:annotation>
+        <xs:documentation xml:lang="en">College Ruled</xs:documentation>
+      </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="33.11999893188476">
+      <xs:annotation>
+        <xs:documentation xml:lang="en">Standard Ruled</xs:documentation>
+      </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="46.79999923706054">
+      <xs:annotation>
+        <xs:documentation xml:lang="en">Wide Ruled</xs:documentation>
+      </xs:annotation>
+      </xs:enumeration>
+    </xs:restriction>
+  </xs:simpleType>
+  <!-- PageSettings -->
+  <xs:element name="pageSettings" type="tns:PageSettings"/>
+  <xs:complexType name="PageSettings">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+        Page Setup Preferences for the My Journal Notebook Add-in for OneNote
+      </xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="color" type="tns:PageColorEnum" default="automatic"/>
+      <xs:element name="ruleLinesVisible" type="xs:boolean" default="false">
+        <xs:annotation>
+          <xs:documentation xml:lang="en">
+            If you want rule lines, set this parameter to true.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="ruleLinesHorizontalColor" type="tns:RuleLinesColorEnum"
+        minOccurs="0"/>
+      <xs:element name="ruleLinesHorizontalSpacing" type="tns:RuleLinesSpacingEnum"
+        minOccurs="0"/>
+      <xs:element name="ruleLinesMarginColor" type="tns:RuleLinesMarginColorEnum"
+        minOccurs="0"/>
+      <xs:element name="title" type="tns:PageTitleEnum" default="MM/dd/yyyy"/>
+    </xs:sequence>
+  </xs:complexType>
+</xs:schema>

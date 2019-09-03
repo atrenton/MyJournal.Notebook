@@ -1,0 +1,112 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<customUI xmlns="http://schemas.microsoft.com/office/2009/07/customui"
+  xmlns:addIn="urn:MyJournal-Notebook-UI:CustomUI-v16.0"
+  onLoad="NotifyRibbonLoad" loadImage="LoadImage">
+<ribbon>
+  <tabs>
+    <tab idMso="TabHome">
+      <group idQ="addIn:MyJournal" label="Add-In" insertAfterMso="GroupTagging">
+        <splitButton id="SplitButton" size="large" keytip="J">
+          <button id="NotebookButton" getLabel="GetAboutLabel"
+           imageMso="OpenNotebook" onAction="NotifyButtonAction"
+           getScreentip="GetAboutScreentip" getSupertip="GetSupertip" />
+          <menu id="PageSettingsMenu" itemSize="large" keytip="JS"
+           getScreentip="GetAboutScreentip" getSupertip="GetSupertip">
+            <menuSeparator id="MS_1" title="Page Settings" />
+            <gallery id="PageColorGallery" imageMso="PageColorGallery"
+                     columns="4" rows="4" itemHeight="32" itemWidth="32"
+                     showItemLabel="false" label="Page &amp;Color"
+                     supertip="Choose a color for the background of the page."
+                     onAction="NotifyColorAction">
+              <item id="_EDF5FE" image="Blue" screentip="Blue" />
+              <item id="_FFFADF" image="Yellow" screentip="Yellow" />
+              <item id="_ECF0E5" image="Green" screentip="Green" />
+              <item id="_FFEEEF" image="Red" screentip="Red" />
+              <item id="_F3E9FF" image="Purple" screentip="Purple" />
+              <item id="_E5EFEB" image="Cyan" screentip="Cyan" />
+              <item id="_FBF2E1" image="Orange" screentip="Orange" />
+              <item id="_FBEDF6" image="Magenta" screentip="Magenta" />
+              <item id="_E5EDF3" image="Blue_Mist" screentip="Blue Mist" />
+              <item id="_E8E3EB" image="Purple_Mist" screentip="Purple Mist" />
+              <item id="_F9F4E7" image="Tan" screentip="Tan" />
+              <item id="_FDFDDD" image="Lemon" screentip="Lemon" />
+              <item id="_ECF9E5" image="Apple" screentip="Apple" />
+              <item id="_D4F9F2" image="Teal" screentip="Teal" />
+              <item id="_EFDEDE" image="Red_Chalk" screentip="Red Chalk" />
+              <item id="_E9E9ED" image="Silver" screentip="Silver" />
+              <button id="PageColorNone" imageMso="ViewNormalView"
+                      label="&amp;No color" onAction="NotifyButtonAction" />
+            </gallery>
+            <menu id="PageTitleMenu" imageMso="ControlTitle" label="Page &amp;Title">
+              <menuSeparator id="MS_2" title="Select a Date Format" />
+              <checkBox id="DashDelimitedDate_DD_MM_YYYY" label="dd-mm-yyyy"
+                        getPressed="GetCheckBoxPressed" tag="PageTitle"
+                        getScreentip="GetScreentip"
+                        onAction="NotifyCheckBoxAction" />
+              <checkBox id="DashDelimitedDate_MM_DD_YYYY" label="mm-dd-yyyy"
+                        getPressed="GetCheckBoxPressed" tag="PageTitle"
+                        getScreentip="GetScreentip"
+                        onAction="NotifyCheckBoxAction" />
+              <checkBox id="DashDelimitedDate_YYYY_MM_DD" label="yyyy-mm-dd"
+                        getPressed="GetCheckBoxPressed" tag="PageTitle"
+                        getScreentip="GetScreentip"
+                        onAction="NotifyCheckBoxAction" />
+              <menuSeparator id="MS_3" />
+              <checkBox id="SlashDelimitedDate_DD_MM_YYYY" label="dd/mm/yyyy"
+                        getPressed="GetCheckBoxPressed" tag="PageTitle"
+                        getScreentip="GetScreentip"
+                        onAction="NotifyCheckBoxAction" />
+              <checkBox id="SlashDelimitedDate_MM_DD_YYYY" label="mm/dd/yyyy"
+                        getPressed="GetCheckBoxPressed" tag="PageTitle"
+                        getScreentip="GetScreentip"
+                        onAction="NotifyCheckBoxAction" />
+              <checkBox id="SlashDelimitedDate_YYYY_MM_DD" label="yyyy/mm/dd"
+                        getPressed="GetCheckBoxPressed" tag="PageTitle"
+                        getScreentip="GetScreentip"
+                        onAction="NotifyCheckBoxAction" />
+              <menuSeparator id="MS_4" />
+              <checkBox id="DayOfMonthDate_DDD_DD" label="ddd dd"
+                        getPressed="GetCheckBoxPressed" tag="PageTitle"
+                        getScreentip="GetScreentip"
+                        onAction="NotifyCheckBoxAction" />
+              <checkBox id="DayOfMonthDate_DDDD_DD" label="dddd dd"
+                        getPressed="GetCheckBoxPressed" tag="PageTitle"
+                        getScreentip="GetScreentip"
+                        onAction="NotifyCheckBoxAction" />
+              <checkBox id="DayOfMonthDate_MMMM_DD" label="mmmm dd"
+                        getPressed="GetCheckBoxPressed" tag="PageTitle"
+                        getScreentip="GetScreentip"
+                        onAction="NotifyCheckBoxAction" />
+            </menu>
+            <menu id="RuleLinesMenu" imageMso="RuleLinesMenu"
+                  label="Rule &amp;Lines">
+              <menuSeparator id="MS_5" title="Select a Style" />
+              <checkBox id="Narrow_Ruled" label="Narrow"
+                        getPressed="GetCheckBoxPressed" tag="RuleLinesSpacing"
+                        onAction="NotifyCheckBoxAction" />
+              <checkBox id="College_Ruled" label="College"
+                        getPressed="GetCheckBoxPressed" tag="RuleLinesSpacing"
+                        onAction="NotifyCheckBoxAction" />
+              <checkBox id="Standard_Ruled" label="Standard"
+                        getPressed="GetCheckBoxPressed" tag="RuleLinesSpacing"
+                        onAction="NotifyCheckBoxAction" />
+              <checkBox id="Wide_Ruled" label="Wide"
+                        getPressed="GetCheckBoxPressed" tag="RuleLinesSpacing"
+                        onAction="NotifyCheckBoxAction" />
+              <menuSeparator id="MS_6" />
+              <toggleButton id="No_Ruled_Lines" label="None"
+                        getPressed="GetToggleButtonPressed" tag="RuleLinesVisible"
+                        onAction="NotifyToggleButtonAction" />
+            </menu>
+          </menu>
+        </splitButton>
+        <dialogBoxLauncher>
+          <button id="OptionsButton" keytip="JO"
+                  getScreentip="GetOptionsScreentip" getSupertip="GetSupertip"
+                  onAction="NotifyShowForm" tag="OptionsForm" />
+        </dialogBoxLauncher>
+      </group>
+    </tab>
+  </tabs>
+</ribbon>
+</customUI>
