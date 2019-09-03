@@ -73,7 +73,7 @@ Follow me on Twitter for updates and general questions.<br />
 		3. For OneNote 2010 (Version 14.0):
 			- Click on File &#x2192; Help<br />![OneNote 2010 bitness](docs/OneNote-2010-bitness.png)
 
-	- After confirming you have a 32-bit version of OneNote, download and install the MSI file from the [Releases](./releases) page.
+	- After confirming you have a 32-bit version of OneNote, download and install the MSI file from the [releases](releases) page.
 
 ## Usage
 - [Select journal page template](docs/HowTo-Select-Journal-Page-Template.md)
