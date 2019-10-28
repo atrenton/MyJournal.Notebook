@@ -1,3 +1,5 @@
+![Release (latest SemVer)](https://img.shields.io/github/v/release/atrenton/MyJournal.Notebook?style=social)    ![Downloads (by Release)](https://img.shields.io/github/downloads/atrenton/MyJournal.Notebook/v16.0.0/total?style=social)
+
 # *MyJournal.Notebook*
 ***MyJournal.Notebook*** makes journaling with OneNote as simple as possible, but not simpler!<br />
 ![screenshot](docs/README-screenshot.png)<br />
