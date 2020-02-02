@@ -12,12 +12,12 @@
     <AssemblyTitle>My Journal Notebook</AssemblyTitle>
     <Company>Art Trenton</Company>
     <Description>My Journal Add-In for Microsoft OneNote (32-bit)</Description>
-    <Copyright>Copyright © 2012-2019 Art Trenton</Copyright>
+    <Copyright>Copyright © 2012-2020 Art Trenton</Copyright>
     <Product>MyJournal.Notebook</Product>
     <NeutralLanguage>en-US</NeutralLanguage>
-    <AssemblyVersion>16.0.*</AssemblyVersion>
-    <FileVersion>16.0.0.0</FileVersion>
-    <Version>16.0.0</Version>
+    <AssemblyVersion>16.1.*</AssemblyVersion>
+    <FileVersion>16.1.0.0</FileVersion>
+    <Version>16.1.0</Version>
     <ApplicationIcon>App.ico</ApplicationIcon>
     <UseVSHostingProcess>false</UseVSHostingProcess>
     <RegisterForComInterop>true</RegisterForComInterop>
@@ -52,7 +52,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="System.Management" Version="4.*" />
+    <PackageReference Include="System.Management" Version="4.6.*" />
   </ItemGroup>
 
   <ItemGroup>

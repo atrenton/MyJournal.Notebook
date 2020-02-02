@@ -113,39 +113,15 @@ namespace MyJournal.Notebook.Templates
         #region Default Page Content Helpers
 
         /// <summary>
-        /// Creates an Outline note container for Letter paper size dimensions.
-        /// Assumes the default OneNote Calibri 11pt font is used.
-        /// All dimensions are specified in points.
+        /// Creates an Outline note container.
         /// </summary>
         /// <param name="content">User defined content</param>
         /// <returns>OneNote Outline XML element</returns>
         protected virtual XElement CreateOutlineElement(string content)
         {
             var outline = new XElement(OneNS + "Outline");
-
-            /* Position the Outline container on the page:
-             * x: 1 inch left margin * 72 points per inch
-             * y: 18pt narrow rule line height * 5 lines down
-             */
-            outline.Add(
-              new XElement(OneNS + "Position",
-                new XAttribute("x", "72"),
-                new XAttribute("y", "90"),
-                new XAttribute("z", "0")
-              )
-            );
-
-            /* Container dimensions: 
-             * width:  6.5 inches * 72 points per inch
-             * height: 11pt * 1.5 line height
-             */
-            outline.Add(
-              new XElement(OneNS + "Size",
-                new XAttribute("width", "468"),
-                new XAttribute("height", "16.5"),
-                new XAttribute("isSetByUser", "true")
-              )
-            );
+            Outline.SetPosition(outline);
+            Outline.SetSize(outline);
 
             /* Add the child content to the Outline container */
             outline.Add(
@@ -190,7 +166,7 @@ namespace MyJournal.Notebook.Templates
         }
 
         /// <summary>
-        /// Sets the page size to Letter dimensions (in points)
+        /// Sets the page size to the user preferred paper size dimensions.
         /// </summary>
         /// <param name="pageSettings">PageSettings XML element</param>
         protected virtual void SetPageSize(XElement pageSettings)
@@ -201,23 +177,7 @@ namespace MyJournal.Notebook.Templates
                 throw new ArgumentNullException(
                     nameof(pageSettings), "one:PageSize element not found");
             }
-            pageSize.Descendants().Remove();
-            pageSize.Add(
-              new XElement(OneNS + "Orientation",
-                new XAttribute("landscape", "false")
-              )
-            );
-            pageSize.Add(
-              new XElement(OneNS + "Dimensions",
-                new XAttribute("width", "612"), new XAttribute("height", "792")
-              )
-            );
-            pageSize.Add(
-              new XElement(OneNS + "Margins",
-                new XAttribute("top", "36"), new XAttribute("bottom", "36"),
-                new XAttribute("left", "72"), new XAttribute("right", "72")
-              )
-            );
+            PageSize.SetDimensions(pageSize);
         }
 
         /// <summary>

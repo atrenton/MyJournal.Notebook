@@ -70,7 +70,7 @@ namespace MyJournal.Notebook.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Copyright © 2012-2019 Art Trenton.
+        ///   Looks up a localized string similar to Copyright © 2012-2020 Art Trenton.
         /// </summary>
         internal static string About_Copyright {
             get {

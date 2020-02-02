@@ -40,7 +40,7 @@ namespace MyJournal.Notebook.UI
         {
             try
             {
-                if (_settingsChangedCount > 1)
+                if (_settingsChangedCount > 0)
                 {
                     var info = $"Saving user.config: {Component.UserConfigPath}";
                     Tracer.WriteInfoLine(info);
@@ -70,9 +70,27 @@ namespace MyJournal.Notebook.UI
                 Properties.Settings.Default.UpgradeSettings = false;
                 _settingsChangedCount++;
             }
+
             cboPageTemplates.Items.AddRange(TemplateFactory.Items);
             cboPageTemplates.SelectedIndex = cboPageTemplates.Items.IndexOf(
               Properties.Settings.Default.PageTemplate);
+            cboPageTemplates.SelectedIndexChanged +=
+              PageTemplates_SelectedIndexChanged;
+
+            cboPageSize.Items.AddRange(PageSize.Items);
+            cboPageSize.SelectedIndex = cboPageSize.Items.IndexOf(
+              Properties.Settings.Default.PaperSize);
+            cboPageSize.SelectedIndexChanged += PageSize_SelectedIndexChanged;
+        }
+
+        private void PageSize_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            Properties.Settings.Default.PaperSize =
+              cboPageSize.SelectedItem as string;
+
+            _settingsChangedCount++;
+            Tracer.WriteTraceMethodLine("Paper Size = {0}",
+              Properties.Settings.Default.PaperSize);
         }
 
         private void PageTemplates_SelectedIndexChanged(object sender, EventArgs e)
@@ -80,11 +98,9 @@ namespace MyJournal.Notebook.UI
             Properties.Settings.Default.PageTemplate =
               cboPageTemplates.SelectedItem as string;
 
-            if (_settingsChangedCount++ > 0)
-            {
-                Tracer.WriteTraceMethodLine("PageTemplate = {0}",
-                  Properties.Settings.Default.PageTemplate);
-            }
+            _settingsChangedCount++;
+            Tracer.WriteTraceMethodLine("PageTemplate = {0}",
+              Properties.Settings.Default.PageTemplate);
         }
 
         int _settingsChangedCount = 0;

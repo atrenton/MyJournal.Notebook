@@ -5,6 +5,9 @@
     <Setting Name="PageTemplate" Type="System.String" Scope="User">
       <Value Profile="(Default)">OrdinalDay</Value>
     </Setting>
+    <Setting Name="PaperSize" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Automatic</Value>
+    </Setting>
     <Setting Name="UpgradeSettings" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
     </Setting>

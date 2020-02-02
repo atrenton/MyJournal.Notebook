@@ -12,6 +12,15 @@ Function not-exist { -not (Test-Path $args) }
 Set-Alias !exist not-exist
 Set-Alias exist Test-Path
 
+Function Create-Semantic-Version {
+    param(
+        [Parameter(Mandatory=$true)][UInt16]$Major,
+        [Parameter(Mandatory=$true)][UInt16]$Minor,
+        [Parameter(Mandatory=$true)][UInt16]$Patch
+    )
+    return "{0}.{1}.{2}" -f $Major, $Minor, $Patch
+}
+
 # Inspired by https://ss64.com/ps/syntax-msgbox.html
 Function Display-MsgBox {
     param (
@@ -91,4 +100,18 @@ Function Handle-NativeCommandError {
     Write-Host -ForegroundColor red $Error[0].Exception.Message
     $Error.Clear()
     Exit
+}
+
+Function Sign-Git-Tag {
+    param(
+        [Parameter(Mandatory=$true)][string]$TagName,
+        [Parameter(Mandatory=$true)][string]$SemVer,
+        [string]$M = "`"Release version $SemVer`""
+    )
+    $ErrorActionPreference = 'SilentlyContinue'
+    $cmdLine = "git tag -s -m $M $TagName"; $cmdLine
+    Invoke-Expression $cmdLine
+    if ($LASTEXITCODE -ne 0) { Handle-NativeCommandError }
+    git tag -v $TagName
+    if ($LASTEXITCODE -ne 0) { Handle-NativeCommandError }
 }

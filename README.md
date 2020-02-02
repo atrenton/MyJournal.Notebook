@@ -1,13 +1,13 @@
-![Release (latest SemVer)](https://img.shields.io/github/v/release/atrenton/MyJournal.Notebook?style=social)    ![Downloads (by Release)](https://img.shields.io/github/downloads/atrenton/MyJournal.Notebook/v16.0.0/total?style=social)
+[![Release (latest SemVer)](https://img.shields.io/github/v/release/atrenton/MyJournal.Notebook?style=social)](https://github.com/atrenton/MyJournal.Notebook/releases)
 
 # *MyJournal.Notebook*
 ***MyJournal.Notebook*** makes journaling with OneNote as simple as possible, but not simpler!<br />
 ![screenshot](docs/README-screenshot.png)<br />
 Follow me on Twitter for updates and general questions.<br />
-[![Twitter Follow](https://img.shields.io/twitter/follow/ArtTrenton.svg?label=Follow%20@ArtTrenton)](https://twitter.com/ArtTrenton)<br />
+[![Twitter Follow](https://img.shields.io/twitter/follow/ArtTrenton.svg?label=Follow%20@ArtTrenton)](https://twitter.com/ArtTrenton)
 
 ## About
->Record your daily interactions, ideas and inspirations with this add-in for Microsoft® OneNote® 2010 / 2013 / 2016 Windows desktop versions (32-bit).
+Record your daily interactions, ideas and inspirations with this add-in for Microsoft® OneNote® 2010 / 2013 / 2016 Windows desktop versions (32-bit).
 
 <table hspace="25">
 	<tr>
@@ -22,6 +22,7 @@ Follow me on Twitter for updates and general questions.<br />
 	<tr>
 		<th scope="row">User
 		<br />Configurable
+		<br />Page
 		<br />Settings</th>
 		<td>
 			<ul>
@@ -29,6 +30,7 @@ Follow me on Twitter for updates and general questions.<br />
 				<li>Page title date format</li>
 				<li>Page rule lines</li>
 				<li>Page template</li>
+				<li>Paper size</li>
 			</ul>
 		</td>
 	</tr>
@@ -56,6 +58,8 @@ Follow me on Twitter for updates and general questions.<br />
 	</tr>
 </table>
 
+For additional information, read my DEV Community post: [MyJournal.Notebook Add-In for OneNote: Journaling Made Easy](https://dev.to/atrenton/myjournal-notebook-add-in-for-onenote-journaling-made-easy-3g2h "https://dev.to/atrenton/myjournal-notebook-add-in-for-onenote-journaling-made-easy-3g2h")
+
 ## Requirements
  * .NET Framework 4.6.2 or later<br />
  * OneNote 2010 / 2013 / 2016 Windows desktop software (32-bit)<br />
@@ -75,24 +79,12 @@ Follow me on Twitter for updates and general questions.<br />
 		3. For OneNote 2010 (Version 14.0):
 			- Click on File &#x2192; Help<br />![OneNote 2010 bitness](docs/OneNote-2010-bitness.png)
 
-	- After confirming you have a 32-bit version of OneNote, download and install the MSI file from the [releases](https://github.com/atrenton/MyJournal.Notebook/releases) page.
+	- After confirming you have a 32-bit version of OneNote, download and install the MSI file from the [Releases](https://github.com/atrenton/MyJournal.Notebook/releases) page.
 
 ## Usage
 - [Select journal page template](docs/HowTo-Select-Journal-Page-Template.md)
+- [Select journal paper size](docs/HowTo-Select-Journal-Paper-Size.md)
 - [Create journal page](docs/HowTo-Create-Journal-Page.md)
 - [Select journal page color](docs/HowTo-Select-Page-Color.md)
 - [Select journal page title date format](docs/HowTo-Select-Page-Title.md)
 - [Select journal page rule lines format](docs/HowTo-Select-Rule-Lines.md)
-
-## Contributing
-NEWSFLASH: Microsoft Office 365 Blog - November 4, 2019 : [Your OneNote](https://techcommunity.microsoft.com/t5/Office-365-Blog/Your-OneNote/ba-p/954922 "https://techcommunity.microsoft.com/t5/Office-365-Blog/Your-OneNote/ba-p/954922")
-
-Microsoft has decided to **continue mainstream support for OneNote 2016** to align it with Office 2019.
-
-Also, please read [Frequently Asked Questions about OneNote and Office 2019](https://support.office.com/en-us/article/frequently-asked-questions-about-onenote-and-office-2019-6582c7ae-2ec6-408d-8b7a-3ed71a3c2103 "https://support.office.com/en-us/article/frequently-asked-questions-about-onenote-and-office-2019-6582c7ae-2ec6-408d-8b7a-3ed71a3c2103") for more information.
-
-While I consider this add-in to be feature complete, I am now willing to consider enhancement requests or other contributions to this project.
-
-## Developer Resources
-- Check out my Wakelet collection: [OneNote Component Object Model (COM) Programming](https://wakelet.com/wake/0a714a50-a923-4ee5-82f0-2c7171589551)
-- [Debugging with DebugView](docs/debugging/DebugView-README.md)
