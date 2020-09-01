@@ -10,7 +10,7 @@ namespace MyJournal.Notebook.Templates
 {
     class OrdinalDayPageTemplate : DefaultPageTemplate
     {
-        const string
+        internal new const string
         PAGE_TITLE_FONT_STYLE = "font-family:'Lucida Handwriting';font-size:20.0pt";
 
         internal OrdinalDayPageTemplate(OneNote.IApplication application)
@@ -32,7 +32,13 @@ namespace MyJournal.Notebook.Templates
             Tracer.WriteTraceMethodLine("title = {0}", title);
             if (title != null)
             {
-                base.SetPageTitle(page, StylizeTitle(title), PAGE_TITLE_FONT_STYLE);
+                var styledTitle = StylizeTitle(title);
+
+                var fontStyle = (styledTitle == title) ?
+                    DefaultPageTemplate.PAGE_TITLE_FONT_STYLE :
+                    OrdinalDayPageTemplate.PAGE_TITLE_FONT_STYLE;
+
+                base.SetPageTitle(page, styledTitle, fontStyle);
             }
         }
 

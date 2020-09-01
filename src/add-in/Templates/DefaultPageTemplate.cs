@@ -11,9 +11,9 @@ namespace MyJournal.Notebook.Templates
 {
     class DefaultPageTemplate : PageTemplate
     {
-        const string
+        internal const string
           COLOR_ATTRIBUTE_NAME = "color",
-          PAGE_TITLE_FONT_STYLE = "font-family:Calibri;font-size:20.0pt";
+          PAGE_TITLE_FONT_STYLE = "font-family:Calibri;font-size:18.0pt";
 
         internal DefaultPageTemplate(OneNote.IApplication application)
           : base(application) { }
@@ -30,6 +30,7 @@ namespace MyJournal.Notebook.Templates
             SetPageTitle(page, context.PageName, PAGE_TITLE_FONT_STYLE);
 
             page.Root.Add(CreatePageContent());
+            Outline.InsertCursor(page.Root.Element(OneNS + "Outline"));
 
             // DateTime.MinValue is used to tell OneNote to skip its optimistic
             // concurrency check; this is the initial page update.

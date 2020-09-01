@@ -1,40 +1,72 @@
 # OneNote-Library.ps1
-#Requires -Version 5.1
+#requires -Version 5.1
 
-Function not-exist { -not (Test-Path $args) }
-Set-Alias !exist not-exist
-Set-Alias exist Test-Path
+# REF: https://github.com/PowerShell/PowerShell/issues/8076
+Function exist {
+    param($path)
+    return ( [string]::Empty -ne $path -and ( Test-Path $path ))
+}
 
-Function Display-OneNote-Version
+Function Find-RegAsm {
+    param(
+        [Parameter(Mandatory)]
+        [ValidateSet('x86', 'x64')]
+        [string]${Specify "x86" or "x64" platform}
+    )
+    $Platform = ${Specify "x86" or "x64" platform}
+
+    $dotNetPath = "$env:windir\Microsoft.NET"
+    $getChildPath = "Get-RegAsm-$Platform-ChildPath"
+    $regAsm = Join-Path $dotNetPath $(& $getChildPath)
+
+    if (exist $regAsm) {
+        return $regAsm
+    } else {
+        Write-Host -ForegroundColor Red 'RegAsm.exe not found'
+        Exit
+    }
+}
+
+Function Get-Assembly-Path
 {
     param(
-        [ValidateScript({
-            if( $_ -match 'Office\d\d' )
-            {
-                $true
-            }
-            else
-            {
-                throw "Invalid value: $_"
-            }
-        })][string] $OfficeProductName
+        [Parameter(Mandatory)]
+        [string]${Specify path to MyJournal.Notebook.dll assembly (wildcards OK)}
     )
-    [hashtable]$version_lookup = @{
-        12 = '2007'
-        14 = '2010'
-        15 = '2013'
-        16 = '2016'
-    }
+    $path = ${Specify path to MyJournal.Notebook.dll assembly (wildcards OK)}
 
-    $len = $OfficeProductName.Length
-    [int]$i = $OfficeProductName.Substring($len - 2)
-    echo "`r`nOneNote $($version_lookup[$i]) is installed."
+    $assembly = (Resolve-Path $path).Path
+
+    if (exist $assembly) {
+        return $assembly
+    } else {
+        throw "$assembly not found"
+    }
+}
+
+Function Get-OneNote-AppPath
+{
+    $ErrorActionPreference = 'Stop'
+    $appPaths = 'SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths'
+    $program = 'OneNote.exe'
+    $key = $null
+    try
+    {
+        $key = Get-ItemProperty -Path "HKLM:\$appPaths\$program"
+    }
+    catch [System.Management.Automation.ItemNotFoundException]
+    {
+        Write-Warning "App Paths registry key is missing for $program"
+        Press-Any-Key
+        Exit
+    }
+    return $key.'(default)'
 }
 
 Function Get-OneNote-Bitness
 {
     param (
-        [Parameter(Mandatory=$true)][string]$ExeFilePath
+        [string]$ExeFilePath = $(Get-OneNote-AppPath)
     )
     if (exist $ExeFilePath) {
         # The following code was inspired by:
@@ -61,8 +93,42 @@ Function Get-OneNote-Bitness
     }
 }
 
+Function Get-OneNote-ProductName
+{
+    param(
+        [ValidateScript({
+            if( $_ -match 'Office\d\d' ) {
+                $true
+            } else {
+                throw "Invalid value: $_"
+            }
+        })][string] $OfficeVersion
+    )
+
+    [hashtable]$productName = @{
+        12 = '2007'
+        14 = '2010'
+        15 = '2013'
+        16 = '2016'
+    }
+
+    $len = $OfficeVersion.Length
+    [int]$i = $OfficeVersion.Substring($len - 2)
+    return $productName[$i]
+}
+
+Function Get-RegAsm-x64-ChildPath {
+    return 'Framework64\v4.0.30319\RegAsm.exe'
+}
+
+Function Get-RegAsm-x86-ChildPath {
+    return 'Framework\v4.0.30319\RegAsm.exe'
+}
+
 Function Press-Any-Key
 {
-    Write-Host 'Press any key to continue. . .' -NoNewline
-    $Host.UI.RawUI.ReadKey('NoEcho, IncludeKeyDown') | Out-Null
+    if ($Host.Name -notmatch 'ISE') {
+        Write-Host 'Press any key to continue. . .' -NoNewline
+        $Host.UI.RawUI.ReadKey('NoEcho, IncludeKeyDown') | Out-Null
+    }
 }

@@ -1,16 +1,17 @@
 # About-MyJournal-Notebook.ps1
 
-If ( [IntPtr]::Size * 8 -ne 32 )
-{
-    $this = $MyInvocation.MyCommand.Path
-    C:\Windows\SysWOW64\WindowsPowerShell\v1.0\PowerShell.exe -File $this
-    Exit
-    # NOTE: The Assembly::LoadFile statement below must run in 32-bit instance
-    # of PowerShell in order to successfully load the COM Add-in assembly.
-}
-
 # Load the common script library
 . "$PSScriptRoot\Common-Library.ps1"
+
+[int]$bits=[IntPtr]::Size * 8
+
+if (( $(Get-OneNote-Bitness) -eq '32-bit') -and ( $bits -ne 32 ))
+{
+    $this = $MyInvocation.MyCommand.Path
+    Write-Host Loading 32-bit PowerShell. . .
+    & "$env:windir\SysWOW64\WindowsPowerShell\v1.0\PowerShell.exe" -File $this
+    Exit
+}
 
 # Load the COM Add-in assembly
 $assembly = [Reflection.Assembly]::LoadFile("$(Get-ComAddIn-CodeBase)")

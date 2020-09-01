@@ -6,24 +6,33 @@
     <RootNamespace>MyJournal.Notebook</RootNamespace>
     <AssemblyName>MyJournal.Notebook</AssemblyName>
     <TargetFramework>net462</TargetFramework>
-    <Platforms>x86</Platforms>
+    <Platforms>x86;x64</Platforms>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>App.snk</AssemblyOriginatorKeyFile>
     <AssemblyTitle>My Journal Notebook</AssemblyTitle>
     <Company>Art Trenton</Company>
-    <Description>My Journal Add-In for Microsoft OneNote (32-bit)</Description>
     <Copyright>Copyright © 2012-2020 Art Trenton</Copyright>
     <Product>MyJournal.Notebook</Product>
     <NeutralLanguage>en-US</NeutralLanguage>
-    <AssemblyVersion>16.1.*</AssemblyVersion>
-    <FileVersion>16.1.0.0</FileVersion>
-    <Version>16.1.0</Version>
+    <AssemblyVersion>16.2.*</AssemblyVersion>
+    <FileVersion>16.2.0.0</FileVersion>
+    <Version>16.2.0</Version>
     <ApplicationIcon>App.ico</ApplicationIcon>
     <UseVSHostingProcess>false</UseVSHostingProcess>
     <RegisterForComInterop>true</RegisterForComInterop>
     <ResolveComReferenceSilent>True</ResolveComReferenceSilent>
     <LangVersion>6</LangVersion>
     <OutputPath>bin\$(Platform)\$(Configuration)\</OutputPath>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="$(Platform)==x86">
+    <DefineConstants>$(DefineConstants);WIN32</DefineConstants>
+    <Description>My Journal Add-In for Microsoft OneNote (32-bit)</Description>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="$(Platform)==x64">
+    <DefineConstants>$(DefineConstants);WIN64</DefineConstants>
+    <Description>My Journal Add-In for Microsoft OneNote (64-bit)</Description>
   </PropertyGroup>
 
   <ItemGroup>

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
@@ -7,6 +8,7 @@ using MyJournal.Notebook.API;
 using MyJournal.Notebook.Config;
 using MyJournal.Notebook.Diagnostics;
 
+using App = MyJournal.Notebook.API.ApplicationExtensions;
 using OneNote = Microsoft.Office.Interop.OneNote;
 
 using TemplateMethod = System.Action<MyJournal.Notebook.API.PageContext,
@@ -134,11 +136,17 @@ namespace MyJournal.Notebook.Templates
                     else
                     {
                         Utils.ExceptionHandler.HandleException(ex);
-                        modalDisplay = Utils.WinHelper.DisplayErrorAsync;
-                        modalText = new[] {
+                        var errorMessage = new List<string>
+                        {
                             "OneNote API Error",
                             Utils.ExceptionHandler.FormatHResult(ex.HResult)
                         };
+                        if (App.IsErrorCode(ex.HResult))
+                        {
+                            errorMessage.Add(App.ErrorCodeTable[ex.HResult]);
+                        }
+                        modalDisplay = Utils.WinHelper.DisplayErrorAsync;
+                        modalText = errorMessage.ToArray();
                         break;
                     }
                 }/* end catch */
@@ -210,7 +218,13 @@ namespace MyJournal.Notebook.Templates
                     {
                         var sw = Stopwatch.StartNew();
                         template.Invoke(context, page, settings);
-                        PageTemplate.ScrollToTopOfPage();
+
+                        var one = page.Root.Name.Namespace;
+                        var outline = page.Root.Element(one + "Outline");
+                        if (Outline.IsNotEmpty(outline) ) {
+                            PageTemplate.ScrollToTopOfPage();
+                        }
+
                         Tracer.WriteInfoLine("{0} elapsed time: {1} ms",
                             template.Method.Name, sw.ElapsedMilliseconds);
                     }

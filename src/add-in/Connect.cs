@@ -7,7 +7,7 @@ using OneNote = Microsoft.Office.Interop.OneNote;
 
 namespace MyJournal.Notebook
 {
-    [ComVisible(true), Guid(Component.ProgId_GUID), ProgId(Component.ProgId)]
+    [ComVisible(true), Guid(Component.ProgId_Guid), ProgId(Component.ProgId)]
     public sealed class Connect : API.AddInBase, Extensibility.IDTExtensibility2,
       Office.IRibbonExtensibility
 

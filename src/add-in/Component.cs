@@ -6,29 +6,34 @@ using System.Management;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using Microsoft.Win32;
-using MyJournal.Notebook.API;
 using MyJournal.Notebook.Config;
 using MyJournal.Notebook.Diagnostics;
+using App = MyJournal.Notebook.API.ApplicationExtensions;
 
 // Internals of this component are not visible to COM
 [assembly: ComVisible(false)]
 
-// GUID for the type library (.tlb)
-[assembly: Guid("2f2c9d5c-3b72-4592-abac-f354c7b9f18b")]
+// Guid and Version for the type library (.tlb)
+[assembly: Guid("2F2C9D5C-3B72-4592-ABAC-F354C7B9F18B")]
+[assembly: TypeLibVersion(1, 0)]
 
 namespace MyJournal.Notebook
 {
     static class Component
     {
+#if WIN32
         const string
-          ONENOTE_APP_NOT_FOUND = "OneNote desktop application not found.";
-
+          ONENOTE_APP_NOT_FOUND = "OneNote 32-bit application not found.";
+#elif WIN64
+        const string
+          ONENOTE_APP_NOT_FOUND = "OneNote 64-bit application not found.";
+#endif
         internal const string Description = "My Journal Notebook COM Add-in";
         internal const string FriendlyName = "My Journal";
         internal const string ProgId = "MyJournal.Notebook.Connect";
 
         // GUID for MyJournal.Notebook.Connect class
-        internal const string ProgId_GUID = "B899BB4F-3A1E-4E6E-9040-9B9B65969180";
+        internal const string ProgId_Guid = "B899BB4F-3A1E-4E6E-9040-9B9B65969180";
 
         internal const int CommandLineSafe = 0;
         internal const int LoadBehavior = 3;
@@ -54,7 +59,7 @@ namespace MyJournal.Notebook
 
         static Component()
         {
-            s_appId_guid = string.Format("{{{0}}}", Component.ProgId_GUID);
+            s_appId_guid = string.Format("{{{0}}}", Component.ProgId_Guid);
 
             s_addIn_subkey =
                 @"SOFTWARE\Microsoft\Office\OneNote\AddIns\" + Component.ProgId;
@@ -101,30 +106,26 @@ namespace MyJournal.Notebook
 
         static bool IsOneNoteInstalled()
         {
-            const string
-              FriendlyAppName = "FriendlyAppName",
-              SubKey = @"Applications\onenote.exe";
-
             var isInstalled = false;
             var line = ONENOTE_APP_NOT_FOUND;
 
-            using (var k = Registry.ClassesRoot.OpenSubKey(SubKey))
+            if (App.IsOneNoteInstalled())
             {
-                if (k != null && k.GetValue(FriendlyAppName) != null)
-                {
-                    var filePath = ApplicationExtensions.GetExeFilePath();
-                    var exeFileInfo = new Utils.ExeFileInfo(filePath);
+                var exeFilePath = App.GetExeFilePath();
+                var exeFileInfo = new Utils.ExeFileInfo(exeFilePath);
 #if DEBUG
-                    var nl = new[] { Environment.NewLine };
-                    var options = StringSplitOptions.None;
-                    var args = exeFileInfo.ToString().Split(nl, options);
-                    foreach (var arg in args) Tracer.WriteDebugLine(arg);
+                var nl = new[] { Environment.NewLine };
+                var options = StringSplitOptions.None;
+                var args = exeFileInfo.ToString().Split(nl, options);
+                foreach (var arg in args) Tracer.WriteDebugLine(arg);
 #endif
-                    line = string.Format("{0} ({1}) is installed",
-                      k.GetValue(FriendlyAppName), exeFileInfo.ImageType);
-
-                    isInstalled = exeFileInfo.Is32Bit();
-                }
+                line = string.Format("{0} ({1}) is installed",
+                    App.FriendlyName, exeFileInfo.ImageType);
+#if WIN32
+                isInstalled = exeFileInfo.Is32Bit();
+#elif WIN64
+                isInstalled = exeFileInfo.Is64Bit();
+#endif
             }
             Tracer.WriteTraceMethodLine(line);
             return isInstalled;

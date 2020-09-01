@@ -1,16 +1,17 @@
 # List-OneNote-Notebooks.ps1
 
-If ( [IntPtr]::Size * 8 -ne 32 )
-{
-    $this = $MyInvocation.MyCommand.Path
-    & "$env:windir\SysWOW64\WindowsPowerShell\v1.0\PowerShell.exe" -File $this
-    Exit
-    # NOTE: The OneNote.Application COM object must be loaded in a 32-bit
-    # instance of PowerShell.
-}
-
 # Load the OneNote common script library
 . "$PSScriptRoot\OneNote-Library.ps1"
+
+[int]$bits=[IntPtr]::Size * 8
+
+if (( $(Get-OneNote-Bitness) -eq '32-bit') -and ( $bits -ne 32 ))
+{
+    $this = $MyInvocation.MyCommand.Path
+    Write-Host Loading 32-bit PowerShell. . .
+    & "$env:windir\SysWOW64\WindowsPowerShell\v1.0\PowerShell.exe" -File $this
+    Exit
+}
 
 $ErrorActionPreference = 'Stop'
 $OneNote = $null
@@ -20,10 +21,14 @@ try
 }
 catch [System.Runtime.InteropServices.COMException]
 {
-    Write-Host -ForegroundColor red 'OneNote COM API is not available.'
+    Write-Host -ForegroundColor Red 'OneNote COM API is not available.'
     Press-Any-Key
     Exit
 }
+
+$SpecialLocation = [string]::Empty
+$OneNote.GetSpecialLocation('slDefaultNotebookFolder', [ref]$SpecialLocation)
+echo "Default Notebook Folder: $SpecialLocation`r`n"
 
 [xml]$Hierarchy = $null
 $OneNote.GetHierarchy([string]::Empty, 'hsNotebooks', [ref]$Hierarchy)

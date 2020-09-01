@@ -1,13 +1,18 @@
-﻿# Build.ps1 -- Builds MyJournal.Notebook VS2017 Solution using MSBuild
-#Requires –Version 4
+﻿# Build.ps1 -- Builds MyJournal.Notebook VS2017+ Solution using MSBuild
 #Requires -RunAsAdministrator
 
 # Load the common script library
 . "$PSScriptRoot\scripts\Common-Library.ps1"
 
+if ($OneNote_Bitness -eq '64-bit') {
+    $Platform = 'x64'
+} else {
+    $Platform = 'x86'
+}
+
 if ($global:MSBuild_EXE -eq $null) {
     Set-Variable `
-        -Name MSBuild_EXE  -Value $(Find-MSBuild-v15) `
+        -Name MSBuild_EXE  -Value $(Find-MSBuild $Platform) `
         -Option Constant -Scope Global
 }
 
@@ -24,7 +29,7 @@ Set-Location $PSScriptRoot
 # To specify Git Commit SHA-1 hash, use the /p:SourceRevisionId property:
 # EXAMPLE: "/p:SourceRevisionId=g$(Git-Latest-Commit)"
 #-------------------------------------------------------------------------------
-$properties = @('/p:Configuration=Release', '/p:Platform=x86',
+$properties = @('/p:Configuration=Release', "/p:Platform=$Platform",
                 "/p:SourceRevisionId=g$(Git-Latest-Commit)")
 
 $sln = '"{0}"' -f "$PSScriptRoot\src\MyJournal.Notebook.sln"

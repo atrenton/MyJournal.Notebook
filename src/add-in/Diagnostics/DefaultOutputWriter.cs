@@ -6,12 +6,13 @@ namespace MyJournal.Notebook.Diagnostics
 {
     class DefaultOutputWriter : OutputWriter
     {
-        const string DEBUG = "[DEBUG] ";
-        const string DITTO = "[  \"  ] ";
-        const string ERROR = "[ERROR] ";
-        const string INFO  = "[INFO ] ";
-        const string TRACE = "[TRACE] ";
-        const string WARN  = "[WARN ] ";
+        const string
+            DEBUG = "[DEBUG] ",
+            DITTO = "[  \"  ] ",
+            ERROR = "[ERROR] ",
+            INFO = "[INFO ] ",
+            TRACE = "[TRACE] ",
+            WARN = "[WARN ] ";
 
         internal DefaultOutputWriter()
         {
@@ -84,11 +85,11 @@ namespace MyJournal.Notebook.Diagnostics
 
         protected internal MethodBase GetDefaultMethodBase()
         {
-            #if DEBUG
-                return new StackFrame(3, false).GetMethod();
-            #else
-                return new StackFrame(2, false).GetMethod();
-            #endif
+#if DEBUG
+            return new StackFrame(3, false).GetMethod();
+#else
+            return new StackFrame(2, false).GetMethod();
+#endif
         }
     }
 }

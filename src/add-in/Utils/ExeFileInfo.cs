@@ -1,19 +1,21 @@
 ﻿using System;
+using System.Globalization;
 using System.IO;
 using System.Runtime.InteropServices;
-using WORD = System.UInt16;
 using DWORD = System.UInt32;
+using WORD = System.UInt16;
 
 namespace MyJournal.Notebook.Utils
 {
     class ExeFileInfo
     {
+#if WIN32
         [DllImport("kernel32.dll", SetLastError = true)]
         public static extern bool Wow64DisableWow64FsRedirection(ref IntPtr ptr);
 
         [DllImport("kernel32.dll", SetLastError = true)]
         public static extern bool Wow64RevertWow64FsRedirection(IntPtr ptr);
-
+#endif
         #region Properties
 
         /// <summary>
@@ -65,21 +67,24 @@ namespace MyJournal.Notebook.Utils
         internal ExeFileInfo(string filePath)
         {
             FileInfo = new FileInfo(filePath);
-            if (FileInfo.Extension != ".exe")
+            if (FileInfo.Extension.ToLower(CultureInfo.CurrentCulture) != ".exe")
             {
                 const string Msg = "Not an Executable file";
                 throw new ArgumentException(Msg, nameof(filePath));
             }
+#if WIN32
             var ptr = new IntPtr();
             var isWow64FsRedirectionDisabled = Wow64DisableWow64FsRedirection(ref ptr);
-
+#endif
             var fs = new FileStream(FileInfo.FullName, FileMode.Open, FileAccess.Read);
             InitCOFFHeader(fs);
 
+#if WIN32
             if (isWow64FsRedirectionDisabled)
             {
                 Wow64RevertWow64FsRedirection(ptr);
             }
+#endif
         }
 
         void InitCOFFHeader(FileStream fs)
@@ -168,7 +173,7 @@ namespace MyJournal.Notebook.Utils
         [StructLayout(LayoutKind.Sequential)]
         internal struct IMAGE_FILE_HEADER
         {
-            #pragma warning disable IDE1006 // Naming Styles
+#pragma warning disable IDE1006 // Naming Styles
             internal WORD Machine;
             internal WORD NumberOfSections;
             internal DWORD TimeDateStamp;
@@ -176,7 +181,7 @@ namespace MyJournal.Notebook.Utils
             internal DWORD NumberOfSymbols;
             internal WORD SizeOfOptionalHeader;
             internal WORD Characteristics;
-            #pragma warning restore IDE1006 // Naming Styles
+#pragma warning restore IDE1006 // Naming Styles
         }
 
         internal const ushort
