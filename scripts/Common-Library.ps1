@@ -11,11 +11,19 @@ if ($global:AddIn_GUID -eq $null) {
 
 Function Create-Semantic-Version {
     param(
-        [Parameter(Mandatory=$true)][UInt16]$Major,
-        [Parameter(Mandatory=$true)][UInt16]$Minor,
-        [Parameter(Mandatory=$true)][UInt16]$Patch
+        [Parameter(Mandatory,Position=0)][UInt16]$Major,
+        [Parameter(Mandatory,Position=1)][UInt16]$Minor,
+        [Parameter(Mandatory,Position=2)][UInt16]$Patch,
+        [Parameter(Mandatory,Position=3)]
+        [AllowEmptyString()]
+        [ValidateSet('', 'alpha', 'beta')]
+        [string]$PreRelease
     )
-    return "{0}.{1}.{2}" -f $Major, $Minor, $Patch
+    if ($PreRelease -eq [string]::Empty) {
+        return "{0}.{1}.{2}" -f $Major, $Minor, $Patch
+    } else {
+        return "{0}.{1}.{2}-{3}" -f $Major, $Minor, $Patch, $PreRelease
+    }
 }
 
 # Inspired by https://ss64.com/ps/syntax-msgbox.html
@@ -187,7 +195,13 @@ Function Sign-Git-Tag {
     param(
         [Parameter(Mandatory=$true)][string]$TagName,
         [Parameter(Mandatory=$true)][string]$SemVer,
-        [string]$M = "`"Release version $SemVer`""
+        [string]$M = "`"$(&{
+            if ($SemVer.Contains('-')) {
+                'Pre-release'
+            } else {
+                'Release'
+            }
+        }) version $SemVer`""
     )
     $ErrorActionPreference = 'SilentlyContinue'
     $cmdLine = "git tag -s -m $M $TagName"; $cmdLine

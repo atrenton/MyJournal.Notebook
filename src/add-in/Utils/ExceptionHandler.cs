@@ -15,7 +15,8 @@ namespace MyJournal.Notebook.Utils
         static ExceptionHandler()
         {
             s_hResultList = new List<HRESULT> {
-                ONENOTE_IS_BUSY, SYNCHRONIZING_NOTEBOOK, COR_E_XML
+                RPC_E_CALL_REJECTED, RPC_E_SERVERCALL_RETRYLATER,
+                SYNCHRONIZING_NOTEBOOK, COR_E_XML
             };
         }
 
@@ -53,8 +54,10 @@ namespace MyJournal.Notebook.Utils
             return false;
         }
 
-        const HRESULT ONENOTE_IS_BUSY = unchecked((HRESULT)(0x8001010A));
-        const HRESULT SYNCHRONIZING_NOTEBOOK = unchecked((HRESULT)(0x8004201D));
-        const HRESULT COR_E_XML = unchecked((HRESULT)(0x80131940));
+        internal const HRESULT
+            COR_E_XML = unchecked((HRESULT)0x80131940),
+            RPC_E_CALL_REJECTED = unchecked((HRESULT)0x80010001),
+            RPC_E_SERVERCALL_RETRYLATER = unchecked((HRESULT)0x8001010A),
+            SYNCHRONIZING_NOTEBOOK = unchecked((HRESULT)0x8004201D);
     }
 }

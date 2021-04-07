@@ -58,5 +58,17 @@ namespace MyJournal.Notebook.Properties {
                 this["UpgradeSettings"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("( local )")]
+        public string StorageAccount {
+            get {
+                return ((string)(this["StorageAccount"]));
+            }
+            set {
+                this["StorageAccount"] = value;
+            }
+        }
     }
 }

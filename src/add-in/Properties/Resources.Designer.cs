@@ -70,7 +70,7 @@ namespace MyJournal.Notebook.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Copyright © 2012-2020 Art Trenton.
+        ///   Looks up a localized string similar to Copyright © 2012-2021 Art Trenton.
         /// </summary>
         internal static string About_Copyright {
             get {
@@ -136,7 +136,7 @@ namespace MyJournal.Notebook.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Click here to select a page template for your Journal notebook..
+        ///   Looks up a localized string similar to Click here for additional Journal notebook configuration options..
         /// </summary>
         internal static string UI_OptionsButton_Supertip {
             get {

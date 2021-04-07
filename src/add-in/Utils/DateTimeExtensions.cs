@@ -11,13 +11,14 @@ namespace MyJournal.Notebook.Utils
         /// </summary>
         internal static string Format(this DateTime dt, PageTitleEnum pageTitle)
         {
-            var result = dt.ToString(pageTitle.XmlEnumValue());
+            var dtLocal = dt.ToLocalTime();
+            var result = dtLocal.ToString(pageTitle.XmlEnumValue());
             switch (pageTitle)
             {
                 case PageTitleEnum.DayOfMonthDate_DDD_DD:
                 case PageTitleEnum.DayOfMonthDate_DDDD_DD:
                 case PageTitleEnum.DayOfMonthDate_MMMM_DD:
-                    return string.Concat(result, dt.OrdinalDaySuffix());
+                    return string.Concat(result, dtLocal.OrdinalDaySuffix());
                 default:
                     return result;
             }

@@ -16,17 +16,17 @@ Record your daily interactions, ideas and inspirations with this add-in for Micr
       <img src="docs/journal.png" alt="journal" />
     </th>
     <td>With one click of a button, this add-in
-    <br />creates a notebook on local storage
-    <br />organized by year, month, and day.</td>
+    <br />creates a notebook organized by
+    <br />year, month, and day.</td>
   </tr>
   <tr />
   <tr>
     <th scope="row">User
     <br />Configurable
-    <br />Page
     <br />Settings</th>
     <td>
       <ul>
+        <li>OneDrive storage account (beta)</li>
         <li>Page color</li>
         <li>Page title date format</li>
         <li>Page rule lines</li>
@@ -66,7 +66,7 @@ For additional information, check out the [**Wiki**](https://github.com/atrenton
 - Microsoft Windows 7 OS or later<br />
 - Microsoft .NET Framework 4.6.2 or later<br />
 - Microsoft OneNote 2010 / 2013 / 2016 Windows desktop software (32-bit or 64-bit)<br />
-- Microsoft Visual Studio 2017 version 15.2 or later (developers only)<br />
+- Microsoft Visual Studio 2017 version 15.9 or later (developers only)<br />
 
 ## Installation
 
@@ -76,7 +76,6 @@ For additional information, check out the [**Wiki**](https://github.com/atrenton
 
 - Unsupported versions of OneNote:
     - OneNote for Windows 10
-    - OneNote 2016 installed from [here](https://www.onenote.com/download "https://www.onenote.com/download"), unless its combined with a paid MS Office product to unlock local notebook support. See [what additional benefits do I get if I use OneNote with an Microsoft 365 subscription or as part of Office 2019](https://support.office.com/en-us/article/frequently-asked-questions-about-onenote-6582c7ae-2ec6-408d-8b7a-3ed71a3c2103?ui=en-US&rs=en-US&ad=US#gen20) for more information.
 
 &NewLine;
 

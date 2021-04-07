@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](https://semver.org/).
 
+## [16.2.1-beta] - 2021-04-07
+
+### Added
+
+- Support for storage of 'My Journal' notebook on OneDrive - Issue [3]
+
+[3]:https://github.com/atrenton/MyJournal.Notebook/issues/3
+
 ## [16.2.0] - 2020-09-01
 
 ### Added
@@ -26,3 +34,4 @@ This project adheres to [Semantic Versioning](https://semver.org/).
 [16.0.0]:https://github.com/atrenton/MyJournal.Notebook/releases/tag/v16.0.0
 [16.1.0]:https://github.com/atrenton/MyJournal.Notebook/releases/tag/v16.1.0
 [16.2.0]:https://github.com/atrenton/MyJournal.Notebook/releases/tag/v16.2.0
+[16.2.1-beta]:https://github.com/atrenton/MyJournal.Notebook/releases/tag/v16.2.1-beta

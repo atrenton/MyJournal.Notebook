@@ -103,17 +103,20 @@ namespace MyJournal.Notebook.Templates
             var settings = sender as IPageSettingsModel;
             if (settings == null) return;
 
-            int retryCount = 0, retryLimit = 4;
+            int retryCount = 0, retryLimit = 5;
             Func<OneNote.Window, string[], Task> modalDisplay = null;
             OneNote.Window modalOwner = null;
             string[] modalText = null;
-            var delay = TimeSpan.FromMilliseconds(250);
+
+            var latencyFactor = (StorageAccount.IsDefault) ? 1 : 10;
+            var delay = TimeSpan.FromMilliseconds(500 * latencyFactor);
+            var stopwatch = Stopwatch.StartNew();
 
             for (; ; ) // BEGIN Retry pattern
             {
                 try
                 {
-                    await CreateNewPageAsync(settings).ConfigureAwait(false);
+                    await CreateNewPageTask(settings).ConfigureAwait(false);
                     break;
                 }
                 catch (Exception ex)
@@ -152,34 +155,37 @@ namespace MyJournal.Notebook.Templates
                 }/* end catch */
 
                 Tracer.WriteWarnLine("Transient error, sleeping {0} ms . . .",
-                  delay.Milliseconds);
+                  delay.TotalMilliseconds);
 
                 await Task.Delay(delay).ConfigureAwait(false);
             }// *END* Retry pattern
+
+            stopwatch.Stop();
 
             if (modalDisplay != null)
             {
                 await modalDisplay(modalOwner, modalText).ConfigureAwait(false);
             }
+            else
+            {
+                Tracer.WriteInfoLine("CreateNewPage elapsed time: {0} ms",
+                    stopwatch.ElapsedMilliseconds.ToString("N0"));
+            }
         }
 
-        async Task CreateNewPageAsync(IPageSettingsModel settings)
+        Task CreateNewPageTask(IPageSettingsModel settings)
         {
-            await Task.Run(() =>
+            Action action = () =>
             {
                 var context = new PageContext(Application, settings.Title);
                 if (context.PageNotFound())
                 {
-                    var sw = Stopwatch.StartNew();
-
                     AddJournalPageContent(context,
                         context.CreateNewPage(), settings);
 
                     context.NavigateToPage();
                     RunKeyboardMacro();
 
-                    Tracer.WriteInfoLine("CreateNewPageAsync elapsed time: {0} ms",
-                        sw.ElapsedMilliseconds);
                     //DEBUG*/ context.SaveCurrentPageToDisk();
                     //DEBUG*/ context.SendCurrentPageToClipboard();
                 }
@@ -188,7 +194,26 @@ namespace MyJournal.Notebook.Templates
                     context.NavigateToPage();
                     ScrollToBottomOfPage();
                 }
-            }).ConfigureAwait(false);
+            };
+
+            var tcs = new TaskCompletionSource<object>();
+            var thread = new Thread(() =>
+                {
+                    try
+                    {
+                        action();
+                        tcs.SetResult(null);
+                    }
+                    catch (Exception e)
+                    {
+                        tcs.SetException(e);
+                    }
+                });
+
+            thread.SetApartmentState(ApartmentState.STA);
+            thread.Start();
+
+            return tcs.Task;
         }
         #endregion
 

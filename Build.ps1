@@ -30,7 +30,7 @@ Set-Location $PSScriptRoot
 # EXAMPLE: "/p:SourceRevisionId=g$(Git-Latest-Commit)"
 #-------------------------------------------------------------------------------
 $properties = @('/p:Configuration=Release', "/p:Platform=$Platform",
-                "/p:SourceRevisionId=g$(Git-Latest-Commit)")
+                '/p:Version=16.2.1-beta')
 
 $sln = '"{0}"' -f "$PSScriptRoot\src\MyJournal.Notebook.sln"
 

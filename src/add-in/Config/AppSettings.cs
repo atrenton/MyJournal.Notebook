@@ -33,7 +33,7 @@ namespace MyJournal.Notebook.Config
                 if (_settings != null)
                 {
                     var element = _settings[key];
-                    if (element != null) result = element.Value;
+                    if (element != null) result = element.Value.Trim();
                 }
                 return result;
             }

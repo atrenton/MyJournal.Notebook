@@ -3,7 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Xml.Linq;
 using Microsoft.Win32;
 using MyJournal.Notebook.Diagnostics;
@@ -19,6 +21,7 @@ namespace MyJournal.Notebook.API
     {
         const OneNote.CreateFileType
           ONE_CFT_FOLDER = OneNote.CreateFileType.cftFolder,
+          ONE_CFT_NONE = OneNote.CreateFileType.cftNone,
           ONE_CFT_NOTEBOOK = OneNote.CreateFileType.cftNotebook,
           ONE_CFT_SECTION = OneNote.CreateFileType.cftSection;
 
@@ -130,9 +133,6 @@ namespace MyJournal.Notebook.API
         static string GetObjectId(this OneNote.IApplication application,
           string parentId, OneNote.HierarchyScope scope, string objectName)
         {
-            Tracer.WriteTraceMethodLine("Name = {0}, Parent ID = {1}", objectName,
-              parentId);
-
             string xml;
             application.GetHierarchy(parentId, scope, out xml, ONE_XML_SCHEMA);
 
@@ -153,10 +153,11 @@ namespace MyJournal.Notebook.API
 
             // Each hierarchy scope element has a name attribute
             // E.G., For a Page element, it's name attribute contains the page title
-            var node = doc.Descendants(application.GetXmlNamespace() + nodeName)
-                .Where(n => n.Attribute("name").Value == objectName).FirstOrDefault();
 
-            return node?.Attribute("ID").Value;
+            return doc.Descendants(application.GetXmlNamespace() + nodeName)
+               .Where(x => x.Attribute("name").Value == objectName)
+               .Select(x => x.Attribute("ID").Value)
+               .FirstOrDefault();
         }
 
         /// <summary>
@@ -186,32 +187,118 @@ namespace MyJournal.Notebook.API
         internal static string GetNotebookId(this OneNote.IApplication application,
           string notebookName)
         {
-            string objId, path, s = string.Empty;
-            application.GetSpecialLocation(ONE_SL_DEFAULT_NOTEBOOK_FOLDER, out path);
-            var notebookPath = Path.Combine(path, notebookName);
-            application.OpenHierarchy(notebookPath, s, out objId, ONE_CFT_NOTEBOOK);
-            Tracer.WriteTraceMethodLine("Name = {0}, ID = {1}", notebookName, objId);
+            string objId, s = string.Empty;
+            var path = application.GetNotebookPath(notebookName);
+            Tracer.WriteDebugLine("Path = {0}", path);
 
+            // Open the notebook; create it if it doesn't exist
+            var cft = ONE_CFT_NONE;
+            try
+            {
+                application.OpenHierarchy(path, s, out objId, cft);
+            }
+            catch (COMException ce)
+            {
+                if (ce.HResult == HR_FILE_DOES_NOT_EXIST)
+                {
+                    cft = ONE_CFT_NOTEBOOK;
+                    application.OpenHierarchy(path, s, out objId, cft);
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            Tracer.WriteTraceMethodLine("Name = {0}, ID = {1}; Notebook {2}",
+                notebookName, objId,
+                (cft == ONE_CFT_NONE) ? STATUS_OPENED : STATUS_CREATED);
+
+            using (var filter = new MessageFilter())
+            {
+                application.NavigateTo(objId);
+
+                // Synchronize Notebook child content
+                if (cft == ONE_CFT_NONE) application.SyncChildren(objId);
+            }
             return objId;
+        }
+
+        static string GetNotebookPath(this OneNote.IApplication application,
+            string notebookName)
+        {
+            var account = Properties.Settings.Default.StorageAccount;
+            if (account == Config.StorageAccount.DEFAULT)
+            {
+                string path;
+                application.GetSpecialLocation(ONE_SL_DEFAULT_NOTEBOOK_FOLDER, out path);
+                return Path.Combine(path, notebookName);
+            }
+
+            // Normalize notebook folder relative path (user configured)
+            const char Slash = '/';
+            var folder = Component.AppSettings[API_NOTEBOOK_FOLDER_PROPERTY]?
+                .Replace('\\', Slash).TrimEnd(Slash).TrimStart(Slash).Trim()
+             ?? DEFAULT_NOTEBOOK_FOLDER;
+
+            var cid = new Config.StorageAccount().CID[account];
+            var notebookUri =
+                new Uri($"/{cid}/{folder}/{notebookName}/", UriKind.Relative);
+
+            Uri result = null;
+            var valid = Uri.TryCreate(s_webDAV_Uri, notebookUri, out result);
+
+            if (!valid || !result.AbsolutePath.StartsWith($"/{cid}/",
+                StringComparison.InvariantCulture) )
+            {
+                var message = "Notebook URI is invalid.";
+                throw new COMException(message, HR_INVALID_NAME);
+            }
+            return result.AbsoluteUri;
         }
 
         internal static string GetSectionGroupId(this OneNote.IApplication application,
           string groupName, string notebookId)
         {
-            string objId;
-            application.OpenHierarchy(groupName, notebookId, out objId, ONE_CFT_FOLDER);
-            Tracer.WriteTraceMethodLine("Name = {0}, ID = {1}", groupName, objId);
+            var objId = application.GetObjectId(notebookId, ONE_HS_CHILDREN,
+                groupName);
 
+            // Open the section group; create it if it doesn't exist
+            var cft = (objId == null) ? ONE_CFT_FOLDER : ONE_CFT_NONE;
+            application.OpenHierarchy(groupName, notebookId, out objId, cft);
+
+            Tracer.WriteTraceMethodLine("Name = {0}, ID = {1}; SectionGroup {2}",
+                groupName, objId,
+                (cft == ONE_CFT_NONE) ? STATUS_OPENED : STATUS_CREATED);
+
+            using (var filter = new MessageFilter())
+            {
+                // Synchronize SectionGroup child content
+                if (cft == ONE_CFT_NONE) application.SyncChildren(objId);
+            }
             return objId;
         }
 
         internal static string GetSectionId(this OneNote.IApplication application,
           string sectionName, string groupId)
         {
-            string fileName = sectionName + ".one", objId;
-            application.OpenHierarchy(fileName, groupId, out objId, ONE_CFT_SECTION);
-            Tracer.WriteTraceMethodLine("Name = {0}, ID = {1}", sectionName, objId);
+            var objId = application.GetObjectId(groupId, ONE_HS_SECTIONS,
+                sectionName);
 
+            // Open the section; create it if it doesn't exist
+            var cft = (objId == null) ? ONE_CFT_SECTION : ONE_CFT_NONE;
+            var fileName = sectionName + ".one";
+            application.OpenHierarchy(fileName, groupId, out objId, cft);
+
+            Tracer.WriteTraceMethodLine("Name = {0}, ID = {1}; Section {2}",
+                sectionName, objId,
+                (cft == ONE_CFT_NONE) ? STATUS_OPENED : STATUS_CREATED);
+
+            using (var filter = new MessageFilter())
+            {
+                // Synchronize Section child content
+                if (cft == ONE_CFT_NONE) application.SyncChildren(objId);
+            }
             return objId;
         }
 
@@ -219,7 +306,9 @@ namespace MyJournal.Notebook.API
           string pageName, string sectionId)
         {
             var objId = application.GetObjectId(sectionId, ONE_HS_PAGES, pageName);
-            Tracer.WriteTraceMethodLine("Name = {0}, ID = {1}", pageName, objId);
+            Tracer.WriteTraceMethodLine("Name = {0}, ID = {1}", pageName, 
+                objId ?? "(null)");
+
             return objId;
         }
 
@@ -268,7 +357,7 @@ namespace MyJournal.Notebook.API
                         { -2147213309, "The section could not be opened." },
                         { -2147213308, "The section does not exist." },
                         { -2147213307, "The page does not exist." },
-                        { -2147213306, "Local notebooks not supported." },
+                        { -2147213306, "The file does not exist." },
                         { -2147213305, "The image could not be inserted." },
                         { -2147213304, "The ink could not be inserted." },
                         { -2147213303, "The HTML could not be inserted." },
@@ -315,6 +404,31 @@ namespace MyJournal.Notebook.API
         }
 
         /// <summary>
+        /// Synchronize child XML content.
+        /// </summary>
+        /// <param name="application">A reference to the OneNote Application
+        /// Interface.</param>
+        /// <param name="objId">The OneNote parent object ID to be synced.</param>
+        static void SyncChildren(this OneNote.IApplication application, string objId)
+        {
+            Tracer.WriteTraceMethodLine();
+
+            string xml;
+            application.SyncHierarchy(objId);
+            application.GetHierarchy(objId, ONE_HS_CHILDREN, out xml,
+                ONE_XML_SCHEMA);
+
+            if (XDocument.Parse(xml).Root.IsEmpty)
+            {
+                const HRESULT HrNotYetSynchronized =
+                    Utils.ExceptionHandler.SYNCHRONIZING_NOTEBOOK;
+
+                throw new COMException("Content not yet synced.",
+                    HrNotYetSynchronized);
+            }
+        }
+
+        /// <summary>
         /// XML document wrapper for OneNote Application.UpdatePageContent method.
         /// </summary>
         /// <param name="application">A reference to the OneNote Application
@@ -346,8 +460,18 @@ namespace MyJournal.Notebook.API
 
         // Office 2016, 2013 and 2010 version numbers
         static readonly int[] s_office_version_list = { 16, 15, 14 };
+
+        static readonly Uri s_webDAV_Uri = new Uri("https://d.docs.live.net");
+
+        const HRESULT HR_FILE_DOES_NOT_EXIST = unchecked((HRESULT)0x80042006);
+        const HRESULT HR_INVALID_NAME = unchecked((HRESULT)0x80042017);
+
         const string
+          API_NOTEBOOK_FOLDER_PROPERTY = "API.Notebook.Folder",
+          DEFAULT_NOTEBOOK_FOLDER = "Documents",
           INSTALL_SUBKEY = @"SOFTWARE\Microsoft\Office\{0}.0\OneNote\InstallRoot",
-          ONENOTE_EXE = "onenote.exe";
+          ONENOTE_EXE = "onenote.exe",
+          STATUS_CREATED = "-> CREATED",
+          STATUS_OPENED = "-> OPENED";
     }
 }
