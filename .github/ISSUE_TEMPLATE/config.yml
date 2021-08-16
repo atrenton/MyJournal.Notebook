@@ -1,0 +1,10 @@
+---
+blank_issues_enabled: false
+contact_links:
+  - name: "📖 MyJournal.Notebook Wiki"
+    url: https://github.com/atrenton/MyJournal.Notebook/wiki
+    about: Documentation for users of the MyJournal.Notebook OneNote Add-In
+  - name: "💬 Gitter Chat"
+    url: https://gitter.im/MyJournal-Notebook/community
+    about: Chat with the developer and MyJournal.Notebook user community
+...

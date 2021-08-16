@@ -1,0 +1,57 @@
+---
+name: "🐛 Bug report"
+description: Create a bug/issue report
+title: "[Bug]: "
+labels:
+  - bug
+assignees:
+  - atrenton
+body:
+  - type: textarea
+    attributes:
+      label: Current Behavior
+      description: A concise description of what you're experiencing.
+    validations:
+      required: true
+
+  - type: textarea
+    attributes:
+      label: Expected Behavior
+      description: A concise description of what you expected to happen.
+
+  - type: textarea
+    attributes:
+      label: Steps To Reproduce
+      description: Steps to reproduce the behavior.
+      value: |
+        1.
+        2.
+        3.
+        ...
+
+  - type: dropdown
+    attributes:
+      label: OneNote Version
+      description: |
+        In OneNote, go to 'File > Account' and click the 'About OneNote' button
+        for more information.
+      options:
+        - Microsoft® OneNote® 2010 (Version 14.0.xxxx.xxxx)
+        - Microsoft® OneNote® 2013 (Version 15.0.xxxx.xxxx)
+        - Microsoft® OneNote® 2016 (Version 16.0.xxxxx.xxxxx)
+        - Microsoft® OneNote® for Microsoft 365 (Version 16.0.xxxxx.xxxxx)
+    validations:
+      required: true
+
+  - type: textarea
+    attributes:
+      label: Anything else?
+      description: |
+        Tip: You can attach screenshot images or the 'My Journal.log' file from
+        your %TEMP% folder by clicking in this area to highlight it and then
+        dragging the file in.
+
+  - type: markdown
+    attributes:
+      value: "## :memo: Thanks for taking the time to fill out this bug report!"
+...
