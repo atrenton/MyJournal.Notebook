@@ -2,7 +2,6 @@
 using System.Drawing;
 using System.Windows.Forms;
 using MyJournal.Notebook.Diagnostics;
-using MyJournal.Notebook.Templates;
 
 namespace MyJournal.Notebook.UI
 {
@@ -71,27 +70,27 @@ namespace MyJournal.Notebook.UI
                 _settingsChangedCount++;
             }
 
-            cboPageTemplates.Items.AddRange(TemplateFactory.Items);
-            cboPageTemplates.SelectedIndex = cboPageTemplates.Items.IndexOf(
+            PageTemplates.Items.AddRange(Templates.TemplateFactory.Items);
+            PageTemplates.SelectedIndex = PageTemplates.Items.IndexOf(
               Properties.Settings.Default.PageTemplate);
-            cboPageTemplates.SelectedIndexChanged +=
+            PageTemplates.SelectedIndexChanged +=
               PageTemplates_SelectedIndexChanged;
 
-            cboPageSize.Items.AddRange(PageSize.Items);
-            cboPageSize.SelectedIndex = cboPageSize.Items.IndexOf(
+            PageSize.Items.AddRange(Templates.PageSize.Items);
+            PageSize.SelectedIndex = PageSize.Items.IndexOf(
               Properties.Settings.Default.PaperSize);
-            cboPageSize.SelectedIndexChanged += PageSize_SelectedIndexChanged;
+            PageSize.SelectedIndexChanged += PageSize_SelectedIndexChanged;
 
-            cboStorageAccount.Items.AddRange(new Config.StorageAccount().Items);
-            cboStorageAccount.SelectedIndex = cboStorageAccount.Items.IndexOf(
+            StorageAccount.Items.AddRange(new Config.StorageAccount().Items);
+            StorageAccount.SelectedIndex = StorageAccount.Items.IndexOf(
               Properties.Settings.Default.StorageAccount);
-            cboStorageAccount.SelectedIndexChanged += StorageAccount_SelectedIndexChanged;
+            StorageAccount.SelectedIndexChanged += StorageAccount_SelectedIndexChanged;
         }
 
         private void PageSize_SelectedIndexChanged(object sender, EventArgs e)
         {
             Properties.Settings.Default.PaperSize =
-              cboPageSize.SelectedItem as string;
+              PageSize.SelectedItem as string;
 
             _settingsChangedCount++;
             Tracer.WriteTraceMethodLine("Paper Size = {0}",
@@ -101,7 +100,7 @@ namespace MyJournal.Notebook.UI
         private void PageTemplates_SelectedIndexChanged(object sender, EventArgs e)
         {
             Properties.Settings.Default.PageTemplate =
-              cboPageTemplates.SelectedItem as string;
+              PageTemplates.SelectedItem as string;
 
             _settingsChangedCount++;
             Tracer.WriteTraceMethodLine("PageTemplate = {0}",
@@ -111,13 +110,13 @@ namespace MyJournal.Notebook.UI
         private void StorageAccount_SelectedIndexChanged(object sender, EventArgs e)
         {
             Properties.Settings.Default.StorageAccount =
-              cboStorageAccount.SelectedItem as string;
+              StorageAccount.SelectedItem as string;
 
             _settingsChangedCount++;
             Tracer.WriteTraceMethodLine("StorageAccount = {0}",
               Properties.Settings.Default.StorageAccount);
         }
 
-        int _settingsChangedCount = 0;
+        private int _settingsChangedCount = 0;
     }
 }

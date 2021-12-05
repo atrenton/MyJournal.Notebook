@@ -6,6 +6,7 @@
     <RootNamespace>MyJournal.Notebook</RootNamespace>
     <AssemblyName>MyJournal.Notebook</AssemblyName>
     <TargetFramework>net462</TargetFramework>
+    <Features>flow-analysis;strict</Features>
     <Platforms>x86;x64</Platforms>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>App.snk</AssemblyOriginatorKeyFile>
@@ -14,10 +15,11 @@
     <Copyright>Copyright © 2012-2021 Art Trenton</Copyright>
     <Product>MyJournal.Notebook</Product>
     <NeutralLanguage>en-US</NeutralLanguage>
-    <AssemblyVersion>16.2.*</AssemblyVersion>
-    <FileVersion>16.2.1.0</FileVersion>
-    <VersionPrefix>16.2.1</VersionPrefix>
-    <VersionSuffix>beta</VersionSuffix>
+    <AssemblyVersion>16.3.*</AssemblyVersion>
+    <FileVersion>16.3.0.0</FileVersion>
+    <Version>16.3.0</Version>
+    <!--VersionPrefix>16.2.1</VersionPrefix-->
+    <!--VersionSuffix>beta</VersionSuffix-->
     <ApplicationIcon>App.ico</ApplicationIcon>
     <UseVSHostingProcess>false</UseVSHostingProcess>
     <RegisterForComInterop>true</RegisterForComInterop>
@@ -27,12 +29,12 @@
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
 
-  <PropertyGroup Condition="$(Platform)==x86">
+  <PropertyGroup Condition="'$(Platform)'=='x86'">
     <DefineConstants>$(DefineConstants);WIN32</DefineConstants>
     <Description>My Journal Add-In for Microsoft OneNote (32-bit)</Description>
   </PropertyGroup>
 
-  <PropertyGroup Condition="$(Platform)==x64">
+  <PropertyGroup Condition="'$(Platform)'=='x64'">
     <DefineConstants>$(DefineConstants);WIN64</DefineConstants>
     <Description>My Journal Add-In for Microsoft OneNote (64-bit)</Description>
   </PropertyGroup>
@@ -79,7 +81,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.VisualStudio.SlowCheetah" Version="3.2.20">
+    <PackageReference Include="Microsoft.VisualStudio.SlowCheetah" Version="3.2.26">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageReference>

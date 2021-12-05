@@ -81,13 +81,13 @@ namespace MyJournal.Notebook.Templates
             {
                 case PageSize.Automatic:
                     xPosition = "36.0";
-                    yPosition = "68.4000015258789";
+                    yPosition = "68.11085510253906";
                     break;
                 case PageSize.Letter:
                 case PageSize.Legal:
                 case PageSize.A4:
                     xPosition = "72.0";
-                    yPosition = "90.0";
+                    yPosition = "89.71085357666015";
                     break;
                 default:
                     throw new NotSupportedException(

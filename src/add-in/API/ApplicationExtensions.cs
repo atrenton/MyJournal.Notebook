@@ -5,7 +5,6 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
-using System.Threading;
 using System.Xml.Linq;
 using Microsoft.Win32;
 using MyJournal.Notebook.Diagnostics;
@@ -15,7 +14,7 @@ using OneNote = Microsoft.Office.Interop.OneNote;
 namespace MyJournal.Notebook.API
 {
     /// <summary>
-    /// Extends the OneNote 2010 Application Interface.
+    /// Extends the OneNote Application Interface.
     /// </summary>
     static class ApplicationExtensions
     {
@@ -35,7 +34,7 @@ namespace MyJournal.Notebook.API
           OneNote.SpecialLocation.slDefaultNotebookFolder;
 
         const OneNote.XMLSchema ONE_XML_SCHEMA =
-          OneNote.XMLSchema.xs2010;
+          OneNote.XMLSchema.xs2013;
 
         private static Dictionary<HRESULT, string> s_errorCodeTable;
 

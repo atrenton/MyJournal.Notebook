@@ -1,6 +1,6 @@
-# About the DebugView-Filters.ini file
+# About the DebugView-Filter.ini file
 
-The **`DebugView-Filters.ini`** file is a [Sysinternals DebugView](https://docs.microsoft.com/en-us/sysinternals/downloads/debugview) filters file for debugging the **MyJournal.Notebook** add-in.
+The **`DebugView-Filter.ini`** file is a [Windows Sysinternals DebugView](https://docs.microsoft.com/en-us/sysinternals/downloads/debugview) filters file for debugging the **MyJournal.Notebook** add-in.
 
 ## DebugView Menu Settings
 
@@ -20,11 +20,11 @@ The **`DebugView-Filters.ini`** file is a [Sysinternals DebugView](https://docs.
 - Computer
     - Select Connect Local
 
-## How to load the **`DebugView-Filters.ini`** file
+## How to load the **`DebugView-Filter.ini`** file
 
 1. From the DebugView menu, select Edit > Filter/Highlight... (<kbd>Ctrl</kbd> + <kbd>L</kbd>)
 1. Click the Load button
-1. Navigate to the repo `docs\debugging` subdirectory and select the `DebugView-Filters.ini` file
+1. Navigate to the repo `docs\debugging` subdirectory and select the `DebugView-Filter.ini` file
 1. Click the Open button
 1. Click the OK button
 1. Save the filters configuration by closing and reopening DebugView

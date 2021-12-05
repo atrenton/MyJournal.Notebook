@@ -185,8 +185,8 @@ Function Handle-NativeCommandError {
 
 Function Press-Any-Key
 {
-    if ($Host.Name -notmatch 'ISE') {
-        Write-Host 'Press any key to continue. . .' -NoNewline
+    if (($Host.Name -eq 'ConsoleHost') -and (-not $env:WT_SESSION)) {
+        Write-Host "`nPress any key to continue. . ." -NoNewline
         $Host.UI.RawUI.ReadKey('NoEcho, IncludeKeyDown') | Out-Null
     }
 }
