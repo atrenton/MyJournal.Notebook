@@ -83,13 +83,7 @@ namespace MyJournal.Notebook.Diagnostics
             DoWriteLine(text.ToString(), args);
         }
 
-        protected internal MethodBase GetDefaultMethodBase()
-        {
-#if DEBUG
-            return new StackFrame(3, false).GetMethod();
-#else
-            return new StackFrame(2, false).GetMethod();
-#endif
-        }
+        protected internal MethodBase GetDefaultMethodBase() =>
+            new StackFrame(3, false).GetMethod();
     }
 }

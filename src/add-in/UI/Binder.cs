@@ -41,10 +41,8 @@ namespace MyJournal.Notebook.UI
             PageSettings = PageSettingsDataSource.Load();
             BindTemplate(application);
         }
-        ~Binder()
-        {
-            Dispose(false);
-        }
+
+        ~Binder() => Dispose();
 
         internal void CreateJournalPage()
         {
@@ -62,17 +60,19 @@ namespace MyJournal.Notebook.UI
 
         protected virtual void Dispose(bool disposing)
         {
-            if (!_disposed)
+            if (_disposed)
             {
-                if (disposing) // dispose of managed resources
-                {
-                    Tracer.WriteTraceMethodLine();
-                    PageSettingsDataSource.Save(PageSettings);
-                    PageSettings = null;
-                    PageTemplate = null;
-                }
-                _disposed = true;
+                return;
             }
+
+            if (disposing) // dispose of managed resources
+            {
+                Tracer.WriteTraceMethodLine();
+                PageSettingsDataSource.Save(PageSettings);
+                PageSettings = null;
+                PageTemplate = null;
+            }
+            _disposed = true;
         }
 
         #endregion

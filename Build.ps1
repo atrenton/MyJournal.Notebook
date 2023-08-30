@@ -1,5 +1,4 @@
 ﻿# Build.ps1 -- Builds MyJournal.Notebook VS2017+ Solution using MSBuild
-#Requires -RunAsAdministrator
 
 # Load the common script library
 . "$PSScriptRoot\scripts\Common-Library.ps1"
@@ -34,7 +33,4 @@ $properties = @('/p:Configuration=Release', "/p:Platform=$Platform",
 
 $sln = '"{0}"' -f "$PSScriptRoot\src\MyJournal.Notebook.sln"
 
-& $MSBuild_EXE $sln $properties /t:Restore
-
-# MSBuild registers the OneNote COM Add-in; requires Run as Administrator option
-& $MSBuild_EXE $sln $properties /t:'Clean;Build'
+& $MSBuild_EXE $sln $properties /t:'Clean;Build' /restore

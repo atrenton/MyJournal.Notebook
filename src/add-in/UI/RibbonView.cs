@@ -28,10 +28,8 @@ namespace MyJournal.Notebook.UI
             System.Windows.Forms.Application.EnableVisualStyles();
             _binder = new Binder(application);
         }
-        ~RibbonView()
-        {
-            Dispose(false);
-        }
+
+        ~RibbonView() => Dispose();
 
         #region IDisposable Member
 
@@ -43,16 +41,18 @@ namespace MyJournal.Notebook.UI
 
         protected virtual void Dispose(bool disposing)
         {
-            if (!_disposed)
+            if (_disposed)
             {
-                if (disposing)  // dispose of managed resources
-                {
-                    Tracer.WriteTraceMethodLine();
-                    _binder.Dispose();
-                    _binder = null;
-                }
-                _disposed = true;
+                return;
             }
+
+            if (disposing)  // dispose of managed resources
+            {
+                Tracer.WriteTraceMethodLine();
+                _binder.Dispose();
+                _binder = null;
+            }
+            _disposed = true;
         }
 
         #endregion
@@ -86,7 +86,7 @@ namespace MyJournal.Notebook.UI
 
         #region Ribbon Event Handlers
 
-        internal string GetSuperTip(Office.IRibbonControl control)
+        internal static string GetSuperTip(Office.IRibbonControl control)
         {
             Tracer.WriteTraceMethodLine($"Id = {control.Id}");
             var resourceName = $"UI_{control.Id}_Supertip";
@@ -143,7 +143,7 @@ namespace MyJournal.Notebook.UI
             }
         }
 
-        internal MemoryStream PageColor_LoadImage(string imageName)
+        internal static MemoryStream PageColor_LoadImage(string imageName)
         {
             Tracer.WriteTraceMethodLine();
 
@@ -202,7 +202,9 @@ namespace MyJournal.Notebook.UI
             return pressed;
         }
 
+#pragma warning disable CA1822
         internal string PageTitle_GetScreenTip(Office.IRibbonControl control)
+#pragma warning restore CA1822
         {
             Tracer.WriteTraceMethodLine("Id = {0}", control.Id);
             var result = string.Empty;
@@ -299,8 +301,8 @@ namespace MyJournal.Notebook.UI
                 {
                     using (Brush brush = new SolidBrush(color))
                     {
-                        g.DrawRectangle(Pens.LightGray, X, Y, Width-1, Height-1);
-                        g.FillRectangle(brush, X+1, Y+1, Width-2, Height-2);
+                        g.DrawRectangle(Pens.LightGray, X, Y, Width - 1, Height - 1);
+                        g.FillRectangle(brush, X + 1, Y + 1, Width - 2, Height - 2);
                     }
                 }
 

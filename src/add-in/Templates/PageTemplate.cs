@@ -180,10 +180,16 @@ namespace MyJournal.Notebook.Templates
                 var context = new PageContext(Application, settings.Title);
                 if (context.PageNotFound())
                 {
-                    AddJournalPageContent(context,
-                        context.CreateNewPage(), settings);
+                    var page = context.CreateNewPage();
+                    AddJournalPageContent(context, page, settings);
+
+                    // DateTime.MinValue is used to tell OneNote to skip its optimistic
+                    // concurrency check; this is the initial page update.
+                    context.UpdateMyJournal(page, DateTime.MinValue);
 
                     context.NavigateToPage();
+
+                    UpdateRuledLinesView(context, settings);
                     RunKeyboardMacro();
 
                     //DEBUG*/ context.SaveCurrentPageToDisk();
@@ -192,6 +198,7 @@ namespace MyJournal.Notebook.Templates
                 else
                 {
                     context.NavigateToPage();
+                    context.SetFocus();
                     ScrollToBottomOfPage();
                 }
             };
@@ -217,18 +224,10 @@ namespace MyJournal.Notebook.Templates
         }
         #endregion
 
-        /// <summary>
-        /// Positions the input cursor at the end of the outline element.
-        /// </summary>
-        internal virtual void RunKeyboardMacro()
-        {
-            ScrollToBottomOfPage();
-        }
-
         // When updating page content, this mechanism prevents overlapped I/O;
         // otherwise OneNote may throw a COMException:
         // hrLastModifiedDateDidNotMatch (HRESULT 0x80042010)
-        // REF: https://msdn.microsoft.com/en-us/library/office/ff966472(v=office.14).aspx
+        // REF: https://learn.microsoft.com/en-us/office/client-developer/onenote/error-codes-onenote
         async void FireAndForgetAsync(TemplateMethod template,
                                       IPageSettingsModel settings)
         {
@@ -246,7 +245,8 @@ namespace MyJournal.Notebook.Templates
 
                         var one = page.Root.Name.Namespace;
                         var outline = page.Root.Element(one + "Outline");
-                        if (Outline.IsNotEmpty(outline) ) {
+                        if (Outline.IsNotEmpty(outline))
+                        {
                             PageTemplate.ScrollToTopOfPage();
                         }
 
@@ -271,11 +271,53 @@ namespace MyJournal.Notebook.Templates
             ).ConfigureAwait(false);
         }
 
+        /// <summary>
+        /// Positions the input cursor at the end of the outline element.
+        /// </summary>
+        internal virtual void RunKeyboardMacro()
+        {
+            ScrollToBottomOfPage();
+        }
+
+        #region Keystroke Methods
+
         protected static void ScrollToBottomOfPage() =>
           System.Windows.Forms.SendKeys.SendWait(ShortcutKey.CTRL_END);
 
         protected static void ScrollToTopOfPage() =>
           System.Windows.Forms.SendKeys.SendWait(ShortcutKey.CTRL_HOME);
+
+        // This method is a bit of a kludge.  It lets OneNote update the page
+        // with a 1" clear top margin instead of rule lines all the way up.
+        protected static void UpdateRuledLinesView(PageContext context,
+            IPageSettingsModel settings)
+        {
+            if (settings.RuleLinesVisible)
+            {
+                var keys = settings.RuleLinesHorizontalSpacing switch
+                {
+                    RuleLinesSpacingEnum.Narrow_Ruled =>
+                        ShortcutKey.SELECT_NARROW_RULED_LINES,
+
+                    RuleLinesSpacingEnum.College_Ruled =>
+                        ShortcutKey.SELECT_COLLEGE_RULED_LINES,
+
+                    RuleLinesSpacingEnum.Standard_Ruled =>
+                        ShortcutKey.SELECT_STANDARD_RULED_LINES,
+
+                    RuleLinesSpacingEnum.Wide_Ruled =>
+                        ShortcutKey.SELECT_WIDE_RULED_LINES,
+
+                    _ => ShortcutKey.SELECT_NO_RULED_LINES
+                };
+                keys += ShortcutKey.SELECT_HOME_TAB;
+
+                context.SetFocus();
+                System.Windows.Forms.SendKeys.SendWait(keys);
+            }
+        }
+
+        #endregion
 
         #region Template Methods
 

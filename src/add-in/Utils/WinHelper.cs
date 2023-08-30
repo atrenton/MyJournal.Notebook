@@ -38,19 +38,24 @@ namespace MyJournal.Notebook.Utils
         }
 
         [DllImport("user32.dll", SetLastError = false)]
+        [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
         static extern IntPtr GetDesktopWindow();
 
         [DllImport("user32.dll")]
+        [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
         static extern IntPtr GetForegroundWindow();
 
         [DllImport("user32.dll")]
+        [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
         static extern int SetForegroundWindow(IntPtr hWnd);
 
+#pragma warning disable CA1810
         static WinHelper()
         {
             s_caption = Component.AssemblyInfo.Title;
             s_isOneNoteRunning = (Process.GetProcessesByName("OneNote").Length > 0);
         }
+#pragma warning restore CA1810
 
         #region Error Messages
 

@@ -65,7 +65,6 @@ namespace MyJournal.Notebook.UI
                 var info = $"Upgrading user.config: {Component.UserConfigPath}";
                 Tracer.WriteInfoLine(info);
                 Properties.Settings.Default.Upgrade();
-                Properties.Settings.Default.Reload();
                 Properties.Settings.Default.UpgradeSettings = false;
                 _settingsChangedCount++;
             }
@@ -117,6 +116,6 @@ namespace MyJournal.Notebook.UI
               Properties.Settings.Default.StorageAccount);
         }
 
-        private int _settingsChangedCount = 0;
+        private int _settingsChangedCount;
     }
 }

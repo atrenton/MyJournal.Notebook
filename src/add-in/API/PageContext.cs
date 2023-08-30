@@ -105,9 +105,6 @@ namespace MyJournal.Notebook.API
             if (HasPageId())
             {
                 _Application.NavigateTo(PageId, null, false);
-                var windowHandle = _Application.Windows.CurrentWindow.WindowHandle;
-                Tracer.WriteTraceMethodLine("WindowHandle = 0x{0:X8}", windowHandle);
-                Utils.WinHelper.SetFocus(windowHandle);
             }
         }
 
@@ -140,6 +137,13 @@ namespace MyJournal.Notebook.API
                 _CurrentPage.Save(writer);
             }
             WinHelper.SendXmlToClipboard(builder.ToString());
+        }
+
+        internal void SetFocus()
+        {
+            var windowHandle = _Application.Windows.CurrentWindow.WindowHandle;
+            Tracer.WriteTraceMethodLine("WindowHandle = 0x{0:X8}", windowHandle);
+            WinHelper.SetFocus(windowHandle);
         }
 
         /// <summary>

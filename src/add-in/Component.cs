@@ -13,10 +13,6 @@ using App = MyJournal.Notebook.API.ApplicationExtensions;
 // Internals of this component are not visible to COM
 [assembly: ComVisible(false)]
 
-// Guid and Version for the type library (.tlb)
-[assembly: Guid("2F2C9D5C-3B72-4592-ABAC-F354C7B9F18B")]
-[assembly: TypeLibVersion(1, 0)]
-
 namespace MyJournal.Notebook
 {
     static class Component
@@ -31,9 +27,6 @@ namespace MyJournal.Notebook
         internal const string Description = "My Journal Notebook COM Add-in";
         internal const string FriendlyName = "My Journal";
         internal const string ProgId = "MyJournal.Notebook.Connect";
-
-        // GUID for MyJournal.Notebook.Connect class
-        internal const string ProgId_Guid = "B899BB4F-3A1E-4E6E-9040-9B9B65969180";
 
         internal const int CommandLineSafe = 0;
         internal const int LoadBehavior = 3;
@@ -57,9 +50,10 @@ namespace MyJournal.Notebook
 
         #endregion
 
+#pragma warning disable CA1810
         static Component()
         {
-            s_appId_guid = string.Format("{{{0}}}", Component.ProgId_Guid);
+            s_appId_guid = $"{{{ComClassId.Connect}}}";
 
             s_addIn_subkey =
                 @"SOFTWARE\Microsoft\Office\OneNote\AddIns\" + Component.ProgId;
@@ -76,6 +70,7 @@ namespace MyJournal.Notebook
             UserConfigPath = ConfigurationManager.OpenExeConfiguration(
               ConfigurationUserLevel.PerUserRoamingAndLocal).FilePath;
         }
+#pragma warning restore CA1810
 
         static string GetAppDataPath()
         {
@@ -85,11 +80,13 @@ namespace MyJournal.Notebook
                 var folder = Environment.GetFolderPath(localAppData);
                 lock (s_syncAppDataPath)
                 {
+#pragma warning disable CA1508
                     if (s_appDataPath == null)
                     {
                         s_appDataPath =
                           Path.Combine(folder, AssemblyInfo.CompanyName, FriendlyName);
                     }
+#pragma warning restore CA1508
                 }
                 if (!Directory.Exists(s_appDataPath))
                 {
@@ -131,6 +128,25 @@ namespace MyJournal.Notebook
             return isInstalled;
         }
 
+#if NETCOREAPP
+        internal static Assembly LoadFromExecutingAssemblyLocation(
+            System.Runtime.Loader.AssemblyLoadContext context,
+            AssemblyName assemblyName)
+        {
+            Assembly assembly = null;
+            var location = Assembly.GetExecutingAssembly().Location;
+            var assemblyPath = Path.Combine(
+                Path.GetDirectoryName(location), assemblyName.Name + ".dll");
+
+            if (File.Exists(assemblyPath))
+            {
+                Tracer.WriteInfoLine("Loading: {0}", assemblyPath);
+                assembly = context.LoadFromAssemblyPath(assemblyPath);
+            }
+            return assembly;
+        }
+#endif
+
         internal static void Register(Type t)
         {
             Tracer.WriteTraceMethodLine();
@@ -157,6 +173,7 @@ namespace MyJournal.Notebook
                     Tracer.WriteDebugLine("Updating HKCR subkey: {0}", s_clsId_subkey);
                     using (var k = Registry.ClassesRoot.OpenSubKey(s_clsId_subkey, true))
                     {
+                        k.SetValue(null, Component.Description);
                         k.SetValue("AppID", s_appId_guid);
                         using (var defaultIcon = k.CreateSubKey("DefaultIcon"))
                         {
@@ -246,6 +263,6 @@ namespace MyJournal.Notebook
         }
 
         static volatile string s_appDataPath;
-        static readonly object s_syncAppDataPath = new object();
+        static readonly object s_syncAppDataPath = new();
     }
 }

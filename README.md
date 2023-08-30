@@ -4,7 +4,11 @@
 
 ![screenshot](docs/README-screenshot.png)
 
-[![GitHub release (latest by date including pre-releases)](https://img.shields.io/github/v/release/atrenton/MyJournal.Notebook?color=blue&include_prereleases&logo=github)](https://github.com/atrenton/MyJournal.Notebook/releases)&emsp;&emsp;[![GitHub Discussions](https://img.shields.io/github/discussions/atrenton/MyJournal.Notebook?color=green&logo=github)](https://github.com/atrenton/MyJournal.Notebook/discussions)&emsp;&emsp;[![GitHub issues](https://img.shields.io/github/issues/atrenton/MyJournal.Notebook?logo=github)](https://github.com/atrenton/MyJournal.Notebook/issues)&emsp;&emsp;[![Keybase chat](https://img.shields.io/static/v1.svg?label=chat&message=on%20keybase&logo=keybase)](https://keybase.io/atrenton/chat)&emsp;&emsp;[![Tweets](https://img.shields.io/twitter/url?label=tweets&logo=twitter&style=plastic&url=https%3A%2F%2Ftwitter.com%2FArtTrenton)](https://twitter.com/ArtTrenton)
+<div align="center">
+
+<a href="">[![GitHub release (latest by date including pre-releases)](https://img.shields.io/github/v/release/atrenton/MyJournal.Notebook?color=blue&include_prereleases&logo=github)](https://github.com/atrenton/MyJournal.Notebook/releases)&emsp;&emsp;</a><a href="">[![GitHub Discussions](https://img.shields.io/github/discussions/atrenton/MyJournal.Notebook?color=green&logo=github)](https://github.com/atrenton/MyJournal.Notebook/discussions)&emsp;&emsp;</a><a href="">[![GitHub issues](https://img.shields.io/github/issues/atrenton/MyJournal.Notebook?logo=github)](https://github.com/atrenton/MyJournal.Notebook/issues)&emsp;&emsp;</a><a href="">[![tweets](https://img.shields.io/badge/twitter-545454.svg?logo=twitter)](https://twitter.com/ArtTrenton)</a>
+
+</div>
 
 ## About
 
@@ -27,7 +31,7 @@ Record your daily interactions, ideas and inspirations with this add-in for Micr
     <br />Settings</th>
     <td>
       <ul>
-        <li>OneDrive storage account (NEW)</li>
+        <li>OneDrive storage (personal accounts only)</li>
         <li>Page color</li>
         <li>Page title date format</li>
         <li>Page rule lines</li>
@@ -65,25 +69,32 @@ For additional information, check out the [**Wiki**](https://github.com/atrenton
 
 ## Prerequisites
 
-- Microsoft Windows 7 OS or later<br />
-- Microsoft .NET Framework 4.6.2 or later<br />
-- Microsoft [OneNote for Windows] desktop application software (32-bit or 64-bit)<br />
-- Microsoft Visual Studio 2017 version 15.9 or later (developers only)<br />
+- Microsoft [OneNote for Windows] desktop application software (2016 or later)<br />
+- Microsoft [.NET 6 Supported Windows OS]<br />
+- Microsoft [.NET 6 Windows Desktop Runtime], version 6.0.21 or later (x86 for 32-bit OneNote; x64 for 64-bit OneNote)<br />
+- Microsoft Visual Studio 2022 version 17.3 or later (developers only)<br />
 
 ## Installation
 
-- To use this add-in, you must have a Windows desktop version of OneNote installed as part of Office or [Microsoft 365](https://www.microsoft.com/en-us/microsoft-365). You can also download OneNote as a free standalone Windows desktop app with limited features (OneDrive notebook storage only). See the **Where to get it** section of the following document:
-    - [What's the difference between the OneNote versions?](https://support.microsoft.com/en-us/office/what-s-the-difference-between-the-onenote-versions-a624e692-b78b-4c09-b07f-46181958118f)
+- To use this add-in, you must have a Windows desktop version of OneNote installed as part of [Microsoft 365](https://www.microsoft.com/en-us/microsoft-365) or Office. See the **OneNote from Microsoft 365 now in the Microsoft Store** section of the following document for more information:
+    - [Making it easier to get to the OneNote app on Windows](https://techcommunity.microsoft.com/t5/microsoft-365-blog/making-it-easier-to-get-to-the-onenote-app-on-windows/ba-p/3642219)
+
+&NewLine;
+
+- Supported versions of OneNote on devices running Windows:
+    - OneNote for Microsoft 365
+    - OneNote for Office 2016 or later
+
+&NewLine;
+
+- For supported versions of OneNote, download and install the [latest release] of the **MyJournal.Notebook.Setup** program.
 
 &NewLine;
 
 - Unsupported versions of OneNote:
     - [OneNote for Windows 10]
-    - [OneNote 2010](https://docs.microsoft.com/en-us/lifecycle/products/microsoft-onenote-2010 "Microsoft Lifecycle Extended End Date: 10/13/2020") &mdash; if you are still using it, install [release 16.2.0].
-
-&NewLine;
-
-- Download and install the [latest release] of the **MyJournal.Notebook.Setup** program.
+    - [OneNote 2013](https://learn.microsoft.com/en-us/lifecycle/products/microsoft-onenote-2013 "Microsoft Lifecycle Extended End Date: 04/11/2023") &mdash; if you are still using it, install [release 16.3.0].
+    - [OneNote 2010](https://learn.microsoft.com/en-us/lifecycle/products/microsoft-onenote-2010 "Microsoft Lifecycle Extended End Date: 10/13/2020") &mdash; if you are still using it, install [release 16.2.0].
 
 ## Usage
 
@@ -93,9 +104,14 @@ For additional information, check out the [**Wiki**](https://github.com/atrenton
 - [Select journal page color](docs/HowTo-Select-Page-Color.md)
 - [Select journal page title date format](docs/HowTo-Select-Page-Title.md)
 - [Select journal page rule lines format](docs/HowTo-Select-Rule-Lines.md)
-- [Select OneDrive storage account](docs/HowTo-Select-OneDrive-Storage-Account.md) (NEW)
+- [Select OneDrive storage account](docs/HowTo-Select-OneDrive-Storage-Account.md)
 
 [latest release]:https://github.com/atrenton/MyJournal.Notebook/releases "latest by date including pre-releases"
 [release 16.2.0]:https://github.com/atrenton/MyJournal.Notebook/releases/tag/v16.2.0
+[release 16.3.0]:https://github.com/atrenton/MyJournal.Notebook/releases/tag/v16.3.0
+
+[.NET 6 Supported Windows OS]:https://github.com/dotnet/core/blob/main/release-notes/6.0/supported-os.md#windows "core/supported-os.md at main · dotnet/core · GitHub"
+[.NET 6 Windows Desktop Runtime]:https://dotnet.microsoft.com/en-us/download/dotnet/6.0 "Download .NET Desktop Runtime"
+
 [OneNote for Windows]:https://support.microsoft.com/en-us/office/what-s-the-difference-between-the-onenote-versions-a624e692-b78b-4c09-b07f-46181958118f#windows "What's the difference between the OneNote versions?"
 [OneNote for Windows 10]:https://support.microsoft.com/en-us/office/what-s-the-difference-between-the-onenote-versions-a624e692-b78b-4c09-b07f-46181958118f#windows "What's the difference between the OneNote versions?"

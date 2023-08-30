@@ -11,9 +11,11 @@ namespace MyJournal.Notebook.Utils
     {
 #if WIN32
         [DllImport("kernel32.dll", SetLastError = true)]
+        [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
         public static extern bool Wow64DisableWow64FsRedirection(ref IntPtr ptr);
 
         [DllImport("kernel32.dll", SetLastError = true)]
+        [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
         public static extern bool Wow64RevertWow64FsRedirection(IntPtr ptr);
 #endif
         #region Properties
@@ -168,7 +170,9 @@ namespace MyJournal.Notebook.Utils
 
         /// <summary>
         /// Common Object File Format (COFF) header.
-        /// SEE: https://msdn.microsoft.com/en-us/library/windows/desktop/ms680313(v=vs.85).aspx 
+        /// <para>
+        /// SEE: https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-image_file_header
+        /// </para>
         /// </summary>
         [StructLayout(LayoutKind.Sequential)]
         internal struct IMAGE_FILE_HEADER

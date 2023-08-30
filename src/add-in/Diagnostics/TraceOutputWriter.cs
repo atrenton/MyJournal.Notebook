@@ -103,13 +103,7 @@ namespace MyJournal.Notebook.Diagnostics
             Trace.WriteLine(string.Format(format, args));
         }
 
-        protected internal MethodBase GetTraceMethodBase()
-        {
-#if DEBUG
-            return new StackFrame(4, false).GetMethod();
-#else
-            return new StackFrame(3, false).GetMethod();
-#endif
-        }
+        protected internal MethodBase GetTraceMethodBase() =>
+            new StackFrame(4, false).GetMethod();
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.InteropServices;
 using Extensibility;
 using Microsoft.Office.Core;
 using MyJournal.Notebook.Diagnostics;
@@ -7,10 +8,10 @@ using Office = Microsoft.Office.Core;
 
 namespace MyJournal.Notebook.API
 {
-    [System.Runtime.InteropServices.ComVisible(true)]
+    [ComVisible(true), Guid(ComClassId.AddInBase)]
     public abstract class AddInBase : ICOMAddIn, IOneNoteAddIn, IDisposable
     {
-        bool _disposed = false;
+        bool _disposed;
 
         /// <summary>
         /// Specifies how this add-in is connected
@@ -24,10 +25,7 @@ namespace MyJournal.Notebook.API
 
         protected AddInBase() { }
 
-        ~AddInBase()
-        {
-            Dispose(false);
-        }
+        ~AddInBase() => Dispose(false);
 
         #region ICOMAddIn Member
 
@@ -59,7 +57,10 @@ namespace MyJournal.Notebook.API
 
         protected virtual void Dispose(bool disposing)
         {
-            if (_disposed) return;
+            if (_disposed)
+            {
+                return;
+            }
 
             if (disposing)  // dispose of managed resources
             {
@@ -70,7 +71,6 @@ namespace MyJournal.Notebook.API
                 GC.Collect();
                 GC.WaitForPendingFinalizers();
             }
-
             _disposed = true;
         }
 
@@ -157,13 +157,13 @@ namespace MyJournal.Notebook.API
         protected virtual void NotifyStartup()
         {
             Tracer.WriteTraceMethodLine();
-            RibbonEventHandler.OnStartup(this, new EventArgs());
+            RibbonEventHandler.OnStartup(this, EventArgs.Empty);
         }
 
         protected virtual void NotifyShutdown()
         {
             Tracer.WriteTraceMethodLine();
-            RibbonEventHandler.OnShutdown(this, new EventArgs());
+            RibbonEventHandler.OnShutdown(this, EventArgs.Empty);
             Dispose();
         }
 

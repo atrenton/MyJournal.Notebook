@@ -4,6 +4,8 @@ using OneNote = Microsoft.Office.Interop.OneNote;
 
 namespace MyJournal.Notebook.Templates
 {
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance",
+        "CA1812:Avoid uninstantiated internal classes")]
     class BulletPageTemplate : DefaultPageTemplate
     {
         internal BulletPageTemplate(OneNote.IApplication application)

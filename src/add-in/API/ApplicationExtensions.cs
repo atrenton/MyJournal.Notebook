@@ -34,7 +34,7 @@ namespace MyJournal.Notebook.API
           OneNote.SpecialLocation.slDefaultNotebookFolder;
 
         const OneNote.XMLSchema ONE_XML_SCHEMA =
-          OneNote.XMLSchema.xs2013;
+          OneNote.XMLSchema.xsCurrent;
 
         private static Dictionary<HRESULT, string> s_errorCodeTable;
 
@@ -248,7 +248,7 @@ namespace MyJournal.Notebook.API
             var valid = Uri.TryCreate(s_webDAV_Uri, notebookUri, out result);
 
             if (!valid || !result.AbsolutePath.StartsWith($"/{cid}/",
-                StringComparison.InvariantCulture) )
+                StringComparison.InvariantCulture))
             {
                 var message = "Notebook URI is invalid.";
                 throw new COMException(message, HR_INVALID_NAME);
@@ -305,7 +305,7 @@ namespace MyJournal.Notebook.API
           string pageName, string sectionId)
         {
             var objId = application.GetObjectId(sectionId, ONE_HS_PAGES, pageName);
-            Tracer.WriteTraceMethodLine("Name = {0}, ID = {1}", pageName, 
+            Tracer.WriteTraceMethodLine("Name = {0}, ID = {1}", pageName,
                 objId ?? "(null)");
 
             return objId;
@@ -319,6 +319,7 @@ namespace MyJournal.Notebook.API
                 string xml = null;
                 lock (s_syncApplication)
                 {
+#pragma warning disable CA1508
                     if (s_namespace == null)
                     {
                         // Set OneNote XML Namespace value
@@ -326,6 +327,7 @@ namespace MyJournal.Notebook.API
                           ONE_XML_SCHEMA);
                         s_namespace = XDocument.Parse(xml).Root.Name.Namespace;
                     }
+#pragma warning restore CA1508
                 }
             }
             return s_namespace;
@@ -341,7 +343,7 @@ namespace MyJournal.Notebook.API
 
         internal static bool IsOneNoteInstalled() => File.Exists(GetExeFilePath());
 
-        // REF: https://docs.microsoft.com/en-us/office/client-developer/onenote/error-codes-onenote
+        // REF: https://learn.microsoft.com/en-us/office/client-developer/onenote/error-codes-onenote
         static void LoadErrorCodeTable()
         {
             lock (s_syncApplication)

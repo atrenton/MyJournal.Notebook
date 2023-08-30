@@ -1,65 +1,39 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
-    <Deterministic>False</Deterministic>
-    <NoWarn>7035</NoWarn>
     <RootNamespace>MyJournal.Notebook</RootNamespace>
     <AssemblyName>MyJournal.Notebook</AssemblyName>
-    <TargetFramework>net462</TargetFramework>
+    <EnableComHosting>true</EnableComHosting>
+    <TargetFramework>net6.0-windows</TargetFramework>
+    <UseWindowsForms>true</UseWindowsForms>
     <Features>flow-analysis;strict</Features>
     <Platforms>x86;x64</Platforms>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>App.snk</AssemblyOriginatorKeyFile>
     <AssemblyTitle>My Journal Notebook</AssemblyTitle>
-    <Company>Art Trenton</Company>
-    <Copyright>Copyright © 2012-2021 Art Trenton</Copyright>
+    <Copyright>Copyright © 2012-$(Year) $(Company)</Copyright>
     <Product>MyJournal.Notebook</Product>
     <NeutralLanguage>en-US</NeutralLanguage>
-    <AssemblyVersion>16.3.*</AssemblyVersion>
-    <FileVersion>16.3.0.0</FileVersion>
-    <Version>16.3.0</Version>
-    <!--VersionPrefix>16.2.1</VersionPrefix-->
-    <!--VersionSuffix>beta</VersionSuffix-->
     <ApplicationIcon>App.ico</ApplicationIcon>
     <UseVSHostingProcess>false</UseVSHostingProcess>
-    <RegisterForComInterop>true</RegisterForComInterop>
-    <ResolveComReferenceSilent>True</ResolveComReferenceSilent>
-    <LangVersion>6</LangVersion>
-    <OutputPath>bin\$(Platform)\$(Configuration)\</OutputPath>
-    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <ResolveComReferenceSilent>true</ResolveComReferenceSilent>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Platform)'=='x86'">
+  <PropertyGroup Condition=" '$(Platform)'=='x86' ">
     <DefineConstants>$(DefineConstants);WIN32</DefineConstants>
     <Description>My Journal Add-In for Microsoft OneNote (32-bit)</Description>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Platform)'=='x64'">
+  <PropertyGroup Condition=" '$(Platform)'=='x64' ">
     <DefineConstants>$(DefineConstants);WIN64</DefineConstants>
     <Description>My Journal Add-In for Microsoft OneNote (64-bit)</Description>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <CodeAnalysisRuleSet>Add-In.ruleset</CodeAnalysisRuleSet>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x86'">
-    <CodeAnalysisRuleSet>Add-In.ruleset</CodeAnalysisRuleSet>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <CodeAnalysisRuleSet>Add-In.ruleset</CodeAnalysisRuleSet>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x86'">
-    <CodeAnalysisRuleSet>Add-In.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
 
   <ItemGroup>
     <COMReference Include="Microsoft.Office.Core.dll">
       <Guid>2df8d04c-5bfa-101b-bde5-00aa0044de52</Guid>
+      <!-- Microsoft Office 16.0 Object Library -->
       <VersionMajor>2</VersionMajor>
-      <VersionMinor>7</VersionMinor>
+      <VersionMinor>8</VersionMinor>
       <WrapperTool>tlbimp</WrapperTool>
       <Lcid>0</Lcid>
       <Isolated>false</Isolated>
@@ -67,6 +41,7 @@
     </COMReference>
     <COMReference Include="Microsoft.Office.OneNote.dll">
       <Guid>0ea692ee-bb50-4e3c-aef0-356d91732725</Guid>
+      <!-- Microsoft OneNote 15.0 Type Library -->
       <VersionMajor>1</VersionMajor>
       <VersionMinor>1</VersionMinor>
       <WrapperTool>tlbimp</WrapperTool>
@@ -77,36 +52,38 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="2.9.12">
+    <PackageReference Include="Microsoft.VisualStudio.SlowCheetah" Version="4.0.8">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.VisualStudio.SlowCheetah" Version="3.2.26">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+
+    <PackageReference Include="Svg" Version="3.4.4" />
+    <!-- Exclude the following Svg dependency from our output -->
+    <!-- SEE: https://github.com/svg-net/SVG/blob/master/Source/Svg.csproj -->
+    <PackageReference Include="runtime.osx.10.10-x64.CoreCompat.System.Drawing" Version="5.8.64">
+      <IncludeAssets>compile</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="System.Management" Version="4.6.*" />
+
+    <PackageReference Include="System.Management" Version="6.0.0" />
   </ItemGroup>
 
   <ItemGroup>
     <Reference Include="Extensibility, Version=7.0.3300.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
       <HintPath>C:\Windows\assembly\GAC\Extensibility\7.0.3300.0__b03f5f7f11d50a3a\Extensibility.dll</HintPath>
-      <SpecificVersion>False</SpecificVersion>
-      <EmbedInteropTypes>True</EmbedInteropTypes>
+      <SpecificVersion>false</SpecificVersion>
+      <EmbedInteropTypes>true</EmbedInteropTypes>
     </Reference>
-    <Reference Include="System.Configuration" />
-    <Reference Include="System.Windows.Forms" />
   </ItemGroup>
 
   <ItemGroup>
     <Compile Update="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
+      <AutoGen>true</AutoGen>
+      <DesignTime>true</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Update="Properties\Settings.Designer.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>true</DesignTimeSharedInput>
+      <AutoGen>true</AutoGen>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
     <Content Include="UI\CustomUI-v16.0.xml">
@@ -122,6 +99,7 @@
 
   <ItemGroup>
     <EmbeddedResource Include="App.ico" />
+    <EmbeddedResource Include="Properties\Assets\retro-title-background.svg" />
     <EmbeddedResource Update="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -135,6 +113,9 @@
     <None Include="App.snk" />
     <None Include="Config\PageSettings-v1.0.xsd" />
     <None Include="LICENSE.rtf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="$(NuGetPackageRoot)system.management\6.0.0\runtimes\win\lib\net6.0\System.Management.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="App.config">
@@ -154,4 +135,15 @@
     </None>
   </ItemGroup>
 
+  <Target Name="AddInUsage" AfterTargets="Build">
+    <PropertyGroup>
+      <Banner>=============================</Banner>
+      <ScriptDir>$([MSBuild]::Escape($([System.IO.Path]::GetFullPath(`$(SolutionDir)..\scripts\`))))</ScriptDir>
+    </PropertyGroup>
+    <Message Importance="High" Text="$(Banner)%0a  $(MSBuildProjectName) usage instructions  %0a$(Banner)" />
+    <Message Importance="High" Text="The COM Host .DLL file must be registered in order to activate the add-in." />
+    <Message Importance="High" Text="Use the following PowerShell scripts." />
+    <Message Importance="High" Text="Register:%0a    &quot;$(ScriptDir)Register-COM-Host.ps1&quot;" />
+    <Message Importance="High" Text="Unregister:%0a    &quot;$(ScriptDir)Unregister-COM-Host.ps1&quot;" />
+  </Target>
 </Project>

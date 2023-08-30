@@ -8,17 +8,20 @@ namespace MyJournal.Notebook.API
         event EventHandler<RibbonEventArgs> ButtonClick;
         event EventHandler<RibbonEventArgs> CheckBoxClick;
         event EventHandler<RibbonEventArgs> ColorClick;
+#pragma warning disable CA1003
         event Func<Office.IRibbonControl, bool> GetCheckBoxPressed;
         event Func<Office.IRibbonControl, string> GetScreenTip;
         event Func<Office.IRibbonControl, string> GetSuperTip;
         event Func<Office.IRibbonControl, bool> GetToggleButtonPressed;
         event Func<string, System.IO.MemoryStream> LoadImage;
         event Action<Office.IRibbonUI> RibbonLoad;
+#pragma warning restore CA1003
         event EventHandler<RibbonEventArgs> ShowForm;
         event EventHandler Startup;
         event EventHandler Shutdown;
         event EventHandler<RibbonEventArgs> ToggleButtonClick;
 
+#pragma warning disable CA2109 // Review visible event handlers
         void OnButtonClick(object sender, RibbonEventArgs e);
         void OnCheckBoxClick(object sender, RibbonEventArgs e);
         bool OnCheckBoxGetPressed(Office.IRibbonControl control);
@@ -32,5 +35,6 @@ namespace MyJournal.Notebook.API
         string OnSupertip(Office.IRibbonControl control);
         void OnToggleButtonClick(object sender, RibbonEventArgs e);
         bool OnToggleButtonGetPressed(Office.IRibbonControl control);
+#pragma warning restore CA2109
     }
 }

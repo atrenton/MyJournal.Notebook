@@ -10,8 +10,14 @@ namespace MyJournal.Notebook.Templates
 {
     class OrdinalDayPageTemplate : DefaultPageTemplate
     {
-        internal new const string
-        PAGE_TITLE_FONT_STYLE = "font-family:'Lucida Handwriting';font-size:20.0pt";
+        // https://learn.microsoft.com/en-us/typography/font-list/lucida-handwriting
+        // https://bigelowandholmes.typepad.com/bigelow-holmes/2014/10/how-and-why-we-designed-lucida.html
+        protected const string
+            FONT_FAMILY_NAME = "Lucida Handwriting",
+            FONT_SIZE = "20";
+
+        internal new const string PAGE_TITLE_FONT_STYLE =
+            $"font-family:'{FONT_FAMILY_NAME}';font-size:{FONT_SIZE}.0pt";
 
         internal OrdinalDayPageTemplate(OneNote.IApplication application)
           : base(application) { }
@@ -25,6 +31,8 @@ namespace MyJournal.Notebook.Templates
 
             SetPageTitle(page, title, PAGE_TITLE_FONT_STYLE);
             context.UpdateMyJournal(page);
+
+            UpdateRuledLinesView(context, settings);
         }
 
         protected override void SetPageTitle(XDocument page, string title, string style)
@@ -53,7 +61,7 @@ namespace MyJournal.Notebook.Templates
             return $"{parts[0]}<span style='vertical-align:super'>{parts[1]}</span>";
         }
 
-        static string[] SplitTitle(string title)
+        static protected string[] SplitTitle(string title)
         {
             var length = char.IsDigit(title[0]) ? 1 : 2;
             var result = new string[length];
@@ -63,9 +71,8 @@ namespace MyJournal.Notebook.Templates
             }
             else
             {
-                var offset = title.Length - 2;
-                result[0] = title.Substring(0, offset);
-                result[1] = title.Substring(offset);
+                result[0] = title[..^2];
+                result[1] = title[^2..];
             }
             return result;
         }

@@ -1,6 +1,6 @@
 # Known Issues
 
-<sup>Last Updated December 4, 2021</sup>
+<sup>Last Updated August 30, 2023</sup>
 
 The following is the list of Known Issues for the **My Journal Add-In for Microsoft OneNote**:
 
@@ -44,8 +44,10 @@ styles or none at all.
 
 ### Issue: Rule lines do not display in OneNote 2016 or later
 
-Rule lines are not displayed in journal pages created by the Add-In with OneNote
+- Rule lines are not displayed in journal pages created by the Add-In with OneNote
 2016 or later; works fine in earlier versions of OneNote.
+
+- **UPDATE:** This issue has been resolved in [release 16.4.0].
 
 ### Workaround
 
@@ -55,9 +57,7 @@ Rule lines are not displayed in journal pages created by the Add-In with OneNote
     :white_check_mark: Create all new pages with rule lines
 
 - If you have set the **Rule Lines** style to `None` in the Add-In's **Page Settings**,
-you can still set rule lines for the current page via the OneNote **View \>
-Rule Lines** menu option.
+you can still set rule lines for the current page via the OneNote **View \> Rule Lines**
+menu option.
 
-- Also take note that the browser-based **OneNote for the web** (formerly OneNote
-Web App) cannot display rule lines and page color. See [Differences between using
-a notebook in the browser and in OneNote](https://support.microsoft.com/en-us/office/differences-between-using-a-notebook-in-the-browser-and-in-onenote-a3d1fc13-ac74-456b-b391-b633a62aa83f).
+[release 16.4.0]:https://github.com/atrenton/MyJournal.Notebook/releases/tag/v16.4.0

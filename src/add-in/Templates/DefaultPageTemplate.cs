@@ -31,10 +31,6 @@ namespace MyJournal.Notebook.Templates
 
             page.Root.Add(CreatePageContent());
             Outline.InsertCursor(page.Root.Element(OneNS + "Outline"));
-
-            // DateTime.MinValue is used to tell OneNote to skip its optimistic
-            // concurrency check; this is the initial page update.
-            context.UpdateMyJournal(page, DateTime.MinValue);
         }
 
         public override void ChangeJournalPageColor(PageContext context,
@@ -47,6 +43,8 @@ namespace MyJournal.Notebook.Templates
             element.SetAttributeValue(COLOR_ATTRIBUTE_NAME, value);
 
             context.UpdateMyJournal(page);
+
+            UpdateRuledLinesView(context, settings);
         }
 
         public override void ChangeJournalRuleLinesColor(PageContext context,
@@ -81,6 +79,8 @@ namespace MyJournal.Notebook.Templates
                 SetRuleLines(pageSettings, settings);
             }
             context.UpdateMyJournal(page);
+
+            UpdateRuledLinesView(context, settings);
         }
 
         public override void ChangeJournalRuleLinesMarginColor(PageContext context,
@@ -96,6 +96,8 @@ namespace MyJournal.Notebook.Templates
             Tracer.WriteTraceMethodLine();
             SetRuleLines(page.Root.Element(OneNS + "PageSettings"), settings);
             context.UpdateMyJournal(page);
+
+            UpdateRuledLinesView(context, settings);
         }
 
         public override void ChangeJournalPageTitle(PageContext context,
@@ -107,6 +109,8 @@ namespace MyJournal.Notebook.Templates
 
             SetPageTitle(page, title, PAGE_TITLE_FONT_STYLE);
             context.UpdateMyJournal(page);
+
+            UpdateRuledLinesView(context, settings);
         }
 
         #endregion

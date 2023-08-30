@@ -1,33 +1,68 @@
-# About-MyJournal-Notebook.ps1
+# Sign-COM-Host.ps1
+# REF: https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.security/about/about_certificate_provider?view=powershell-5.1
 
 # Load the common script library
 . "$PSScriptRoot\Common-Library.ps1"
 
 [int]$bits=[IntPtr]::Size * 8
-
-if (( $(Get-OneNote-Bitness) -eq '32-bit') -and ( $bits -ne 32 ))
-{
-    $this = $MyInvocation.MyCommand.Path
-    Write-Host Loading 32-bit PowerShell. . .
-    & "$env:windir\SysWOW64\WindowsPowerShell\v1.0\PowerShell.exe" -File $this
-    Exit
+if ($bits -eq 32) {
+    $Platform = 'x86'
+} else {
+    $Platform = 'x64'
 }
 
-$path = Get-ComAddIn-CodeBase
-$info = [System.Diagnostics.FileVersionInfo]::GetVersionInfo($path)
+# Find installed Windows SDK
+# REF: https://en.wikipedia.org/wiki/Microsoft_Windows_SDK
+$sdkVersion = @('22000', '19041', '18362', '17134', '16299', '15063', '14393')
+ForEach ($ver in $sdkVersion) {
+    $Windows_SDK = "$(Get-ProgramFilesPath-x86)\Windows Kits\10\bin\10.0.$($ver).0\$Platform"
+    if (Test-Path -LiteralPath $Windows_SDK) { break; }
+}
 
-$description = $info.Comments
-$copyright = $info.LegalCopyright
-$version = $info.ProductVersion
+# Validate Sign Tool EXE was found
+$SignTool_EXE = Join-Path $Windows_SDK -ChildPath 'signtool.exe'
+if (not-exist $SignTool_EXE) {
+    Write-Host -ForegroundColor Red 'SignTool.exe not found'
+    Exit 1
+}
 
-$msg = "{0}`r`n{1}`r`nProduct Version: {2}" -f $description, $copyright, $version
-Display-MsgBox $msg | Out-Null
+# Select code signing cert
+$Thumbprint = (Get-ChildItem -Path 'Cert:\CurrentUser\My' -CodeSigningCert).Thumbprint
+
+# REF: https://sectigo.com/resource-library/time-stamping-server
+$Timestamp_URL = 'http://timestamp.sectigo.com'
+
+# Select file to sign
+$dialogArgs = @{
+    InitialDirectory = Resolve-Path "$PSScriptRoot\..\src\add-in\bin"
+    Filter = '.NET COM Host|*.comhost.dll'
+    WindowTitle = 'Select COM Host .DLL file to sign'
+}
+$FileName = Show-OpenFileDialog @dialogArgs
+
+if (!$FileName) {
+    Write-Host 'Nothing selected. . . exiting'
+    Exit 1
+}
+
+$ErrorActionPreference = 'SilentlyContinue'
+
+# Invoke SignTool.exe (Sign Tool)
+# REF: https://learn.microsoft.com/en-us/dotnet/framework/tools/signtool-exe
+& $SignTool_EXE @('sign', # '/debug',
+    '/tr', $Timestamp_URL,
+    '/td', 'sha256',
+    '/fd', 'sha256',
+    '/sha1', $Thumbprint,
+     "`"$FileName`"")
+
+if ($LASTEXITCODE -ne 0) { Handle-NativeCommandError }
 
 # SIG # Begin signature block
 # MIIlCAYJKoZIhvcNAQcCoIIk+TCCJPUCAQExDzANBglghkgBZQMEAgEFADB5Bgor
 # BgEEAYI3AgEEoGswaTA0BgorBgEEAYI3AgEeMCYCAwEAAAQQH8w7YFlLCE63JNLG
-# KX7zUQIBAAIBAAIBAAIBAAIBADAxMA0GCWCGSAFlAwQCAQUABCAJ1jOpGJUOGkIk
-# 3TDRxcILpmR8krQ4hs0LLPiilFgh/aCCHsswggVgMIIESKADAgECAhEA6JzdWUZA
+# KX7zUQIBAAIBAAIBAAIBAAIBADAxMA0GCWCGSAFlAwQCAQUABCA3pdJdjFKprARd
+# 7yoti55PyggJFKr3rty/GVIEODaK5KCCHsswggVgMIIESKADAgECAhEA6JzdWUZA
 # uzxpjz0C2ZP+JDANBgkqhkiG9w0BAQsFADB8MQswCQYDVQQGEwJHQjEbMBkGA1UE
 # CBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYDVQQHEwdTYWxmb3JkMRgwFgYDVQQK
 # Ew9TZWN0aWdvIExpbWl0ZWQxJDAiBgNVBAMTG1NlY3RpZ28gUlNBIENvZGUgU2ln
@@ -197,29 +232,29 @@ Display-MsgBox $msg | Out-Null
 # A1UEAxMbU2VjdGlnbyBSU0EgQ29kZSBTaWduaW5nIENBAhEA6JzdWUZAuzxpjz0C
 # 2ZP+JDANBglghkgBZQMEAgEFAKCBhDAYBgorBgEEAYI3AgEMMQowCKACgAChAoAA
 # MBkGCSqGSIb3DQEJAzEMBgorBgEEAYI3AgEEMBwGCisGAQQBgjcCAQsxDjAMBgor
-# BgEEAYI3AgEVMC8GCSqGSIb3DQEJBDEiBCDkoxEF2OFMOA2nZn12O1eQOZzrg4Ix
-# EFds/4BnZSooXTANBgkqhkiG9w0BAQEFAASCAQBzxR3ygLaRFwP0fSS6XDu9iSwW
-# cHkk2z+D9awUlt6qg2jz7vfDo4Zy8tH2expp3DJ9auOK28srm4dx3zdAvLiSdfnS
-# LeH9zkeKH+Yr5ZFiYYYy0BdLcdHfD5IS8v434jy8zOesYf9GZn7i7ZxgU4qTlkpP
-# AfFrD+GeUvj5mEJSt4M66iGzVvt+F4KpJ8bc8Ct+qf7Up4krzA3Eu2P09fHiP/oj
-# dRZektUJYZCVbWCJwNWqOYsSO8dcJsnIqWGdKMKArzZftG0Q6ypveFniPtNAk+dy
-# Fu/+ePuXwpUE9a/55I7DlCgZ6dKAT8bRaVm1U2P7IPIbPsQ0aaatFKQUUousoYID
+# BgEEAYI3AgEVMC8GCSqGSIb3DQEJBDEiBCAozPHFci8dz44keKaRNV8rp7TXpQ6Q
+# xXgZYVJX6JkO1TANBgkqhkiG9w0BAQEFAASCAQC2Sxvh0wRx3+L+MZ9RG3CZ3kqi
+# GBhdG9Or4fAGarqne+q7vT7bzdiVdUwX623rjjgFg093tKf2M+stlYc66msJnyVV
+# RaCh9udsB73UxRQSygaheJbVke3ZbRb72gbwWRqz0CK1Vzm0PBWB19NBj7VthLA4
+# FxOm6ubj3Oa39UGocyrDWDkgTD/rUTrGA/2ixKSe5oGD86FhLb/cyEU1r12YeIoY
+# hvYeuObWCwVbjgtLOChNIxerRg1KThdBDQOCNxaSqwIDu3uBh8FEnV+ICVNpuO3E
+# 0UYLKX4XTLvvaPFaM9Waf1YdAHEp5NzcnumeMF6ubLP33TRHlCpK596eDcIUoYID
 # SzCCA0cGCSqGSIb3DQEJBjGCAzgwggM0AgEBMIGRMH0xCzAJBgNVBAYTAkdCMRsw
 # GQYDVQQIExJHcmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGDAW
 # BgNVBAoTD1NlY3RpZ28gTGltaXRlZDElMCMGA1UEAxMcU2VjdGlnbyBSU0EgVGlt
 # ZSBTdGFtcGluZyBDQQIQOUwl4XygbSeoZeI72R0i1DANBglghkgBZQMEAgIFAKB5
 # MBgGCSqGSIb3DQEJAzELBgkqhkiG9w0BBwEwHAYJKoZIhvcNAQkFMQ8XDTIzMDgy
-# OTA1NDIxOFowPwYJKoZIhvcNAQkEMTIEMANimEpeus1QOIb90jVp0OWtLx/vw354
-# PmSsjXWiity2AWBO4qGRIFclE0LupA014zANBgkqhkiG9w0BAQEFAASCAgAEUpL7
-# wi4qClAItbHroD6LeNJQYmFV2HSPT+GZhOhxFaHJpsa75O9BrOXaJcYFi1fQcoW2
-# KwEXnQpIBhHsAMcdPVhMw7wYHQg0bG0T72JU625n1wK0Ue/6FRdkYhwcwB22Y2Ko
-# HY5xzWgL6PM3LrKthOPLwwlTcoacV+Zw8zHFXIc9a5Tca7aWt1ze5UqKSGxA9Gh4
-# KEbSD8z15wbBVkXPkuiZv62PQHKklIzaATwDC33Vql0UH/SiZdJCGFtvhS4w1nt0
-# gLlSIR9SEMbkwLKzgHjpB08m4twlPaLHOJwFCavlJGanpHCquWs0bnTfZe7Hxt/g
-# 2n6/A5hdn6gB0Lcc2HgZRBQjQrerIo8fI24tfgMO0q/nZhGm1Nri44+bX/GIYA70
-# yzjK8J7vIq8M6/+JMEqp4q51AvbDRdGAjZTIDMuu3qS4XjNZePau3oQjXx5UCVQT
-# hwnRPhmRrt0FX+h7UOfS4CzUL1otuJY/Rn040+yPzv67eMGkBpKsYBGj0lak0sQF
-# iY3ZguwmMIq9VmTTcD3lkaVrKt+o2nXMudrlzLRSFvC3kcA02sNYghnMFdmElwrC
-# 5I80gnccDaKMJEGwY+etqasSFf1NW6OIsxxEF8MHHggztmQ+Pw6bTJ8W2312E3Io
-# hbCTYnhfXWaflAkTE5Iv7yhbzxucDglcB0lhfA==
+# OTA1NDQwMFowPwYJKoZIhvcNAQkEMTIEMAfAPj5dAdxCpg5hq1EIgIQaT4i8FOPi
+# O2lKIN/2brYhlCinhw3FXrPKC5JsFOA+zzANBgkqhkiG9w0BAQEFAASCAgAmeekr
+# 1paCkpnSw5hGTiji4i+oxoIEqHpsAFNQBK6gtn2l5T/Co6a1fwG0H4POwvmhlnWY
+# YLAM9fAPclAYR1LE7nhR6nK9tgkZQMiHFYKoqO0ZqiqGRcAV3GhhVhHETpJ4wx0I
+# 9hpawGnUbK1f9QtJk0l19apY/7y4npvAgHT4D7KOqsi31eluL7DqG9KErGedCOxW
+# 0d/bju6urIW0ocLUzyy2AluP3H9G/We5jNpzlfUnx84G2OSFyp1tV8YwAhzoigel
+# GJprYxZNt2eGfZQjS/uTiTDTnvaV+JfD5IVlkIklcLrZAfQOeDietLosOibTebRH
+# rN2/6mKRWnqgQVFPBC3HcKnh1GgAY2UDGZmxOOK1awEtrpcnb7QM949f6mfy/TUL
+# owWMBPxgHBZeVF3BPbF+nwMAfU5ATnvYm648vPFsrIY3kV7JKHrT71HeQYb4ZYyF
+# rcvXZqEyyQcAeMac3xtJtFHagS7EmbYVYHeram+LysNyv5dDx2J8JQwzevKQ6Exc
+# pTf8z7TmBOGpo0EcoQbXc26rArSWwmYMM5vC7LK46L4nUIJkjowKOoxQ/kkU/A5T
+# TEO4HYc6g7hTeJeUSkr/zyJQGRFQbmpevXr4JkBFLG71k90AeuJmEWx7KF/aK1sY
+# DrFHFBENtCSTni/+jup2bKeAj7zz/K6L3DCtww==
 # SIG # End signature block

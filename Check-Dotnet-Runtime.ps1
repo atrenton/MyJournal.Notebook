@@ -1,33 +1,96 @@
-# About-MyJournal-Notebook.ps1
+﻿# Check-Dotnet-Runtime.ps1
 
-# Load the common script library
-. "$PSScriptRoot\Common-Library.ps1"
+# NOTE: Beginning with PowerShell 7.0, Select-String uses ANSI sequences to
+# highlight the matching patterns in the output. This impacts Regex processing
+# of the output.
+# REF: https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_ansi_terminals?view=powershell-7.2
 
-[int]$bits=[IntPtr]::Size * 8
-
-if (( $(Get-OneNote-Bitness) -eq '32-bit') -and ( $bits -ne 32 ))
-{
-    $this = $MyInvocation.MyCommand.Path
-    Write-Host Loading 32-bit PowerShell. . .
-    & "$env:windir\SysWOW64\WindowsPowerShell\v1.0\PowerShell.exe" -File $this
-    Exit
+# Disable ANSI sequences
+if ($PSEdition -eq 'Core') {
+    $PSStyle.OutputRendering = 'PlainText'
 }
 
-$path = Get-ComAddIn-CodeBase
-$info = [System.Diagnostics.FileVersionInfo]::GetVersionInfo($path)
+# Search for .NET Desktop Runtime 6.0.x
+$runtime = 'Microsoft.WindowsDesktop.App 6'
+[version] $minVersion = '6.0.21'
 
-$description = $info.Comments
-$copyright = $info.LegalCopyright
-$version = $info.ProductVersion
+try {
+    # Load the common script library
+    . "$PSScriptRoot\scripts\Common-Library.ps1"
 
-$msg = "{0}`r`n{1}`r`nProduct Version: {2}" -f $description, $copyright, $version
-Display-MsgBox $msg | Out-Null
+    if ($OneNote_Bitness -eq '64-bit') {
+        $Platform = 'x64'
+    } else {
+        $Platform = 'x86'
+    }
+
+    $pinfo = New-Object System.Diagnostics.ProcessStartInfo
+    $pinfo.FileName = $(Get-Dotnet-FileNamePath $Platform)
+    $pinfo.RedirectStandardError = $true
+    $pinfo.RedirectStandardOutput = $true
+    $pinfo.UseShellExecute = $false
+    $pinfo.Arguments = '--list-runtimes'
+
+    $p = New-Object System.Diagnostics.Process
+    $p.StartInfo = $pinfo
+    $p.Start() | Out-Null
+    $p.WaitForExit()
+    $stdout = $p.StandardOutput.ReadToEnd()
+    $stderr = $p.StandardError.ReadToEnd()
+
+    if ($p.ExitCode -eq 0) {
+        # Match latest .NET 6 version
+        $pattern = [Regex]::new('\s6(\.\d+)+\s')
+
+        $latestRuntime = ($stdout -split '\r?\n' |
+            Select-String $runtime -SimpleMatch |
+            Select-Object -Last 1 | Out-String).Trim()
+
+        $architecture = "for $Platform architecture"
+        $match = $pattern.Match($latestRuntime)
+
+        if ($match.Success -and ([version]($match.Value) -ge $minVersion)) {
+            $msg = "Found .NET Desktop Runtime$($match.Value)$architecture."
+            Write-Host -ForegroundColor Green $msg
+        } else {
+            $msg = ".NET Desktop Runtime $minVersion $architecture not found."
+            Write-Error -Message $msg -Category 'NotInstalled' -ErrorAction 'Stop'
+        }
+    } else {
+        Write-Error -Message $stderr -Category 'FromStdErr' -ErrorAction 'Stop'
+    }
+} catch {
+    $category = $Error[0].CategoryInfo.Category
+    $message = $Error[0].Exception.Message
+
+    if ($category -eq 'NotInstalled') {
+        $color = 'Yellow'
+    } else {
+        $color = 'Red'
+    }
+
+    $hostMessage = @{
+        ForegroundColor = $color
+        Object = "{0}: {1}" -f $category, $message
+    }
+    Write-Host @hostMessage
+
+    if ($category -eq 'NotInstalled') {
+        $promptArgs = @{
+            Caption = 'Install .NET Runtime'
+            Message =  'Do you want to install the .NET Desktop Runtime?'
+        }
+        $yes = YesNo-Prompt @promptArgs
+        if ($yes) { Install-NET-6-Desktop-Runtime $Platform }
+    }
+}
+Press-Any-Key
 
 # SIG # Begin signature block
 # MIIlCAYJKoZIhvcNAQcCoIIk+TCCJPUCAQExDzANBglghkgBZQMEAgEFADB5Bgor
 # BgEEAYI3AgEEoGswaTA0BgorBgEEAYI3AgEeMCYCAwEAAAQQH8w7YFlLCE63JNLG
-# KX7zUQIBAAIBAAIBAAIBAAIBADAxMA0GCWCGSAFlAwQCAQUABCAJ1jOpGJUOGkIk
-# 3TDRxcILpmR8krQ4hs0LLPiilFgh/aCCHsswggVgMIIESKADAgECAhEA6JzdWUZA
+# KX7zUQIBAAIBAAIBAAIBAAIBADAxMA0GCWCGSAFlAwQCAQUABCCpY0M8k+Ap+InL
+# nV3CFjPxF6Fb4clsAT9Wnw6Z6V9T2KCCHsswggVgMIIESKADAgECAhEA6JzdWUZA
 # uzxpjz0C2ZP+JDANBgkqhkiG9w0BAQsFADB8MQswCQYDVQQGEwJHQjEbMBkGA1UE
 # CBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYDVQQHEwdTYWxmb3JkMRgwFgYDVQQK
 # Ew9TZWN0aWdvIExpbWl0ZWQxJDAiBgNVBAMTG1NlY3RpZ28gUlNBIENvZGUgU2ln
@@ -197,29 +260,29 @@ Display-MsgBox $msg | Out-Null
 # A1UEAxMbU2VjdGlnbyBSU0EgQ29kZSBTaWduaW5nIENBAhEA6JzdWUZAuzxpjz0C
 # 2ZP+JDANBglghkgBZQMEAgEFAKCBhDAYBgorBgEEAYI3AgEMMQowCKACgAChAoAA
 # MBkGCSqGSIb3DQEJAzEMBgorBgEEAYI3AgEEMBwGCisGAQQBgjcCAQsxDjAMBgor
-# BgEEAYI3AgEVMC8GCSqGSIb3DQEJBDEiBCDkoxEF2OFMOA2nZn12O1eQOZzrg4Ix
-# EFds/4BnZSooXTANBgkqhkiG9w0BAQEFAASCAQBzxR3ygLaRFwP0fSS6XDu9iSwW
-# cHkk2z+D9awUlt6qg2jz7vfDo4Zy8tH2expp3DJ9auOK28srm4dx3zdAvLiSdfnS
-# LeH9zkeKH+Yr5ZFiYYYy0BdLcdHfD5IS8v434jy8zOesYf9GZn7i7ZxgU4qTlkpP
-# AfFrD+GeUvj5mEJSt4M66iGzVvt+F4KpJ8bc8Ct+qf7Up4krzA3Eu2P09fHiP/oj
-# dRZektUJYZCVbWCJwNWqOYsSO8dcJsnIqWGdKMKArzZftG0Q6ypveFniPtNAk+dy
-# Fu/+ePuXwpUE9a/55I7DlCgZ6dKAT8bRaVm1U2P7IPIbPsQ0aaatFKQUUousoYID
+# BgEEAYI3AgEVMC8GCSqGSIb3DQEJBDEiBCBLsWCUDCZPfiU1naC0G+DLwgbAoMPy
+# N2NrdwGohXnKSzANBgkqhkiG9w0BAQEFAASCAQADnPwn48ZI/0vDuxqHa4Kp+vJJ
+# FRk7KIuy9zpcl8Ar9kCoDfPbF4trA9zHQwy8Nz4ldMvnFymD6sa+tAB1KxDtyq+l
+# vmKI8suA03xUreanPmGUPOLHzKNXL+RddvsaxHFFqz5TWp3/0CRtP1azfi3ppRQ0
+# MxIQjgBduO3ee0nPzldbRihoG9rznIPZQ9DqoMOLp8mYCb5TET107Ixoo/60zAmS
+# TMg4FL9UDDAPo4F2vdeVPZOVXrIG5JcVJ9uhaSthZlZMs1mxSGPajKOEHjF5l3RD
+# qNpAEnT6pYZ/OzmBbp4vnR83hLEN85h5GDzWG9JLmG9x/Q07e0K/SoiKYAtkoYID
 # SzCCA0cGCSqGSIb3DQEJBjGCAzgwggM0AgEBMIGRMH0xCzAJBgNVBAYTAkdCMRsw
 # GQYDVQQIExJHcmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGDAW
 # BgNVBAoTD1NlY3RpZ28gTGltaXRlZDElMCMGA1UEAxMcU2VjdGlnbyBSU0EgVGlt
 # ZSBTdGFtcGluZyBDQQIQOUwl4XygbSeoZeI72R0i1DANBglghkgBZQMEAgIFAKB5
 # MBgGCSqGSIb3DQEJAzELBgkqhkiG9w0BBwEwHAYJKoZIhvcNAQkFMQ8XDTIzMDgy
-# OTA1NDIxOFowPwYJKoZIhvcNAQkEMTIEMANimEpeus1QOIb90jVp0OWtLx/vw354
-# PmSsjXWiity2AWBO4qGRIFclE0LupA014zANBgkqhkiG9w0BAQEFAASCAgAEUpL7
-# wi4qClAItbHroD6LeNJQYmFV2HSPT+GZhOhxFaHJpsa75O9BrOXaJcYFi1fQcoW2
-# KwEXnQpIBhHsAMcdPVhMw7wYHQg0bG0T72JU625n1wK0Ue/6FRdkYhwcwB22Y2Ko
-# HY5xzWgL6PM3LrKthOPLwwlTcoacV+Zw8zHFXIc9a5Tca7aWt1ze5UqKSGxA9Gh4
-# KEbSD8z15wbBVkXPkuiZv62PQHKklIzaATwDC33Vql0UH/SiZdJCGFtvhS4w1nt0
-# gLlSIR9SEMbkwLKzgHjpB08m4twlPaLHOJwFCavlJGanpHCquWs0bnTfZe7Hxt/g
-# 2n6/A5hdn6gB0Lcc2HgZRBQjQrerIo8fI24tfgMO0q/nZhGm1Nri44+bX/GIYA70
-# yzjK8J7vIq8M6/+JMEqp4q51AvbDRdGAjZTIDMuu3qS4XjNZePau3oQjXx5UCVQT
-# hwnRPhmRrt0FX+h7UOfS4CzUL1otuJY/Rn040+yPzv67eMGkBpKsYBGj0lak0sQF
-# iY3ZguwmMIq9VmTTcD3lkaVrKt+o2nXMudrlzLRSFvC3kcA02sNYghnMFdmElwrC
-# 5I80gnccDaKMJEGwY+etqasSFf1NW6OIsxxEF8MHHggztmQ+Pw6bTJ8W2312E3Io
-# hbCTYnhfXWaflAkTE5Iv7yhbzxucDglcB0lhfA==
+# OTA1MzQ0NVowPwYJKoZIhvcNAQkEMTIEMAphI68T6BDyAAmfTlj9YvBrSfRZ9/qS
+# f00Hjmj4v0BacwKVhRBhKi0lbbRl2L3+tTANBgkqhkiG9w0BAQEFAASCAgB19P5H
+# 58QHt738179VjUsRwLyOPlSNC3W7HYHuhCutZFxykV/jdRkUBT+bwoAvmC9ibwbS
+# jG6PmkMqDfAIsUN4rVb76Jl+SvPQnfC4lsP0b/zlIWJ00OkoN925RX6ptBSjYcMq
+# a21YFrrE4IUT9vxxUh2EuORLaGEsVN8PNuid7Q5TAch9lKnfgZMqhRVe4IJ0BEDl
+# vRvhdzu9aRogepo9XBDmBxPwI3MrBKmg+LExv4dyyvLgEA7+Fjea7c8a/SOTGGtC
+# MApF5VerLqMuax7xLOVMD7GKNGhbX982mw/hXd5XuTqn1GmVn79NNbeJ4upqcs9w
+# Ce+Va9Sseu5UaYAiY5TzHe9CJkyhHDVleNqiZi/DinKEz+mmAQFvZjHGTFLYl6lk
+# Ufts4m/sIFIsCJ1WVjN96v8XXqheFO0ti+4474+YuHityseuXzJdOcvfKBcmaFHJ
+# CkHdN6Vfby9sKXN1kd678dfzX56BF6XEKaSL5UVax/3lKvemm1/g+YJAPNpBmb8C
+# QVqDkLs9smEgNvoaIfE6l6rHmNH4AO7hYPNqiVx96MUdBb4AVmStH53PflAn1Nco
+# Nezvt/rgYSDM7K7oX/1rZJZwMXFIPsWF8V1iFmRj7S3amWk649bFDwKAHuLEngid
+# 8qGeA0CxWCPGPy6uMkOhNMLhJoLjj5mF5j8Viw==
 # SIG # End signature block

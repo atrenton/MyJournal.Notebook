@@ -16,7 +16,7 @@ namespace MyJournal.Notebook.Templates
         /// Gets the collection of page template names.
         /// </summary>
         internal static object[] Items =>
-          new[] { "Default", "Bullet", "OrdinalDay", "HappyDay" };
+          new[] { "Default", "Bullet", "OrdinalDay", "HappyDay", "Retro" };
 
         internal static Type PageTemplateType
         {
@@ -30,12 +30,14 @@ namespace MyJournal.Notebook.Templates
 
         #endregion
 
+#pragma warning disable CA1810
         static TemplateFactory()
         {
             const StringComparison Compare = StringComparison.CurrentCulture;
             s_baseTemplateName = typeof(PageTemplate).FullName;
             s_baseIndex = s_baseTemplateName.IndexOf("PageTemplate", Compare);
         }
+#pragma warning restore CA1810
 
         /// <summary>
         /// Creates a page template instance.

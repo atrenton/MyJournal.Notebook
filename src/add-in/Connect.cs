@@ -7,15 +7,17 @@ using OneNote = Microsoft.Office.Interop.OneNote;
 
 namespace MyJournal.Notebook
 {
-    [ComVisible(true), Guid(Component.ProgId_Guid), ProgId(Component.ProgId)]
+    [ComVisible(true), Guid(ComClassId.Connect), ProgId(Component.ProgId)]
     public sealed class Connect : API.AddInBase, Extensibility.IDTExtensibility2,
       Office.IRibbonExtensibility
 
     {
         /// <summary>
-        /// Implements the <a 
-        /// href="https://docs.microsoft.com/en-us/dotnet/api/extensibility.idtextensibility2?view=visualstudiosdk-2017"
-        /// IDTExtensibility2</a> Interface for this OneNote add-in component.
+        /// Implements the IDTExtensibility2 interface for this OneNote add-in
+        /// component.
+        /// <para>
+        /// SEE: https://learn.microsoft.com/en-us/dotnet/api/extensibility.idtextensibility2?view=visualstudiosdk-2022
+        /// </para>
         /// </summary>
         public Connect() : base()
         {
@@ -33,7 +35,7 @@ namespace MyJournal.Notebook
         [ComRegisterFunction()]
         public static void RegisterComponent(Type t)
         {
-            if (t == null) throw new ArgumentNullException(nameof(t));
+            ArgumentNullException.ThrowIfNull(t);
 
             var p = System.Diagnostics.Process.GetCurrentProcess();
 
@@ -44,14 +46,20 @@ namespace MyJournal.Notebook
         [ComUnregisterFunction()]
         public static void UnregisterComponent(Type t)
         {
-            if (t == null) throw new ArgumentNullException(nameof(t));
+            ArgumentNullException.ThrowIfNull(t);
+
+#if NETCOREAPP
+            System.Runtime.Loader.AssemblyLoadContext.Default.Resolving +=
+                Component.LoadFromExecutingAssemblyLocation;
+#endif
+
             Component.Unregister(t);
         }
 
         #endregion
 
         #region IDTExtensibility2 Members
-        // SEE: https://support.microsoft.com/en-us/help/302901/how-to-build-an-office-com-add-in-by-using-visual-c--net#2
+        // SEE: https://learn.microsoft.com/en-US/previous-versions/office/troubleshoot/office-developer/office-com-add-in-using-visual-c#2
 
         /// <summary>
         /// Implements the OnAddInsUpdate method of the IDTExtensibility2 interface.

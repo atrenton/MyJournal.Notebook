@@ -3,7 +3,7 @@ using System.Runtime.InteropServices;
 
 namespace MyJournal.Notebook.API
 {
-    // REF: https://docs.microsoft.com/en-us/windows/win32/api/objidl/nn-objidl-imessagefilter
+    // REF: https://learn.microsoft.com/en-us/windows/win32/api/objidl/nn-objidl-imessagefilter
 
     [ComImport(), Guid("00000016-0000-0000-C000-000000000046"),
     InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]

@@ -1,6 +1,6 @@
 # About the DebugView-Filter.ini file
 
-The **`DebugView-Filter.ini`** file is a [Windows Sysinternals DebugView](https://docs.microsoft.com/en-us/sysinternals/downloads/debugview) filters file for debugging the **MyJournal.Notebook** add-in.
+The **`DebugView-Filter.ini`** file is a [Windows Sysinternals DebugView](https://learn.microsoft.com/en-us/sysinternals/downloads/debugview) filters file for debugging the **MyJournal.Notebook** add-in.
 
 ## DebugView Menu Settings
 
@@ -35,4 +35,4 @@ To debug the add-in, update the following ``appSettings`` values in ``App.config
 Set ``key="Diagnostics.OutputWriter.Type.Name" value="TraceOutputWriter"``
 Set ``key="Diagnostics.TraceSwitch.Level" value="Verbose"``
 
-**NOTE:** When creating a ``Debug`` build, the ``App.config`` file will be automatically configured by the Microsoft VisualStudio [SlowCheetah](https://marketplace.visualstudio.com/items?itemName=vscps.SlowCheetah-XMLTransforms) package.
+**NOTE:** When creating a ``Debug`` build, the ``App.config`` file will be automatically configured by the Microsoft VisualStudio [SlowCheetah](https://marketplace.visualstudio.com/items?itemName=vscps.SlowCheetah-XMLTransforms-VS2022) package.

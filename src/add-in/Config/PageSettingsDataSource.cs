@@ -21,9 +21,10 @@ namespace MyJournal.Notebook.Config
         {
             var settings = new XmlReaderSettings
             {
-                DtdProcessing = DtdProcessing.Ignore,
+                DtdProcessing = DtdProcessing.Prohibit,
                 ValidationFlags = XmlSchemaValidationFlags.ReportValidationWarnings,
-                ValidationType = ValidationType.Schema
+                ValidationType = ValidationType.Schema,
+                XmlResolver = null
             };
 
             var schemaLocation = Properties.Resources.Config_PageSettings_v1_0_xsd;
@@ -69,7 +70,9 @@ namespace MyJournal.Notebook.Config
                 }
                 catch (InvalidOperationException)
                 {
-                    /* use default page settings */
+                    Tracer.WriteErrorLine(
+                        "PageSettings are invalid; default values loaded");
+                    setDefaultValues = true;
                 }
                 catch (Exception e)
                 {

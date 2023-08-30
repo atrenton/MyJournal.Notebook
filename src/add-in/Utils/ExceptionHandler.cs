@@ -10,15 +10,12 @@ namespace MyJournal.Notebook.Utils
 {
     static class ExceptionHandler
     {
-        static readonly List<HRESULT> s_hResultList;
-
-        static ExceptionHandler()
-        {
-            s_hResultList = new List<HRESULT> {
+        static readonly List<HRESULT>
+            s_hResultList = new()
+            {
                 RPC_E_CALL_REJECTED, RPC_E_SERVERCALL_RETRYLATER,
                 SYNCHRONIZING_NOTEBOOK, COR_E_XML
             };
-        }
 
         internal static string FormatHResult(HRESULT hr) =>
             string.Format("HRESULT: 0x{0:X8}", hr);
@@ -32,7 +29,7 @@ namespace MyJournal.Notebook.Utils
                 if (e is COMException)
                 {
                     var hresult = FormatHResult(e.HResult);
-                    if (!e.Message.Contains(hresult)) WriteErrorLine(hresult);
+                    if (!e.Message.Contains(hresult, Compare)) WriteErrorLine(hresult);
                 }
                 WriteStackTrace(e);
             }
@@ -47,12 +44,14 @@ namespace MyJournal.Notebook.Utils
                 {
                     WriteWarnLine("{0}: {1}", e.GetType(), e.Message);
                     var hresult = FormatHResult(e.HResult);
-                    if (!e.Message.Contains(hresult)) WriteWarnLine(hresult);
+                    if (!e.Message.Contains(hresult, Compare)) WriteWarnLine(hresult);
                     return true;
                 }
             }
             return false;
         }
+
+        const StringComparison Compare = StringComparison.CurrentCulture;
 
         internal const HRESULT
             COR_E_XML = unchecked((HRESULT)0x80131940),

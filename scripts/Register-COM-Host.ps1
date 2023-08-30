@@ -1,33 +1,34 @@
-# About-MyJournal-Notebook.ps1
+﻿# Register-COM-Host.ps1
 
 # Load the common script library
 . "$PSScriptRoot\Common-Library.ps1"
 
-[int]$bits=[IntPtr]::Size * 8
+$ErrorActionPreference = 'Stop'
+$dialogArgs = @{
+    InitialDirectory = Get-Build-OutputPath
+    Filter = '.NET COM Host|*.comhost.dll'
+    WindowTitle = 'Select COM Host .DLL file to register'
+}
+$fileName = Show-OpenFileDialog @dialogArgs
 
-if (( $(Get-OneNote-Bitness) -eq '32-bit') -and ( $bits -ne 32 ))
-{
-    $this = $MyInvocation.MyCommand.Path
-    Write-Host Loading 32-bit PowerShell. . .
-    & "$env:windir\SysWOW64\WindowsPowerShell\v1.0\PowerShell.exe" -File $this
-    Exit
+if (!$fileName) {
+    Write-Host 'Nothing selected. . . exiting'
+    Exit 1
 }
 
-$path = Get-ComAddIn-CodeBase
-$info = [System.Diagnostics.FileVersionInfo]::GetVersionInfo($path)
-
-$description = $info.Comments
-$copyright = $info.LegalCopyright
-$version = $info.ProductVersion
-
-$msg = "{0}`r`n{1}`r`nProduct Version: {2}" -f $description, $copyright, $version
-Display-MsgBox $msg | Out-Null
+# Register the COM Host .DLL File
+$processArgs = @{
+    ArgumentList = "`"$fileName`""
+    Verb = 'RunAs' # Run As Administrator
+}
+# REF: https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/regsvr32
+Start-Process regsvr32.exe @processArgs
 
 # SIG # Begin signature block
 # MIIlCAYJKoZIhvcNAQcCoIIk+TCCJPUCAQExDzANBglghkgBZQMEAgEFADB5Bgor
 # BgEEAYI3AgEEoGswaTA0BgorBgEEAYI3AgEeMCYCAwEAAAQQH8w7YFlLCE63JNLG
-# KX7zUQIBAAIBAAIBAAIBAAIBADAxMA0GCWCGSAFlAwQCAQUABCAJ1jOpGJUOGkIk
-# 3TDRxcILpmR8krQ4hs0LLPiilFgh/aCCHsswggVgMIIESKADAgECAhEA6JzdWUZA
+# KX7zUQIBAAIBAAIBAAIBAAIBADAxMA0GCWCGSAFlAwQCAQUABCCf6lEVhotQx1ae
+# msDYsdwKRIiZzRdy+j4oEDcSJOmngaCCHsswggVgMIIESKADAgECAhEA6JzdWUZA
 # uzxpjz0C2ZP+JDANBgkqhkiG9w0BAQsFADB8MQswCQYDVQQGEwJHQjEbMBkGA1UE
 # CBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYDVQQHEwdTYWxmb3JkMRgwFgYDVQQK
 # Ew9TZWN0aWdvIExpbWl0ZWQxJDAiBgNVBAMTG1NlY3RpZ28gUlNBIENvZGUgU2ln
@@ -197,29 +198,29 @@ Display-MsgBox $msg | Out-Null
 # A1UEAxMbU2VjdGlnbyBSU0EgQ29kZSBTaWduaW5nIENBAhEA6JzdWUZAuzxpjz0C
 # 2ZP+JDANBglghkgBZQMEAgEFAKCBhDAYBgorBgEEAYI3AgEMMQowCKACgAChAoAA
 # MBkGCSqGSIb3DQEJAzEMBgorBgEEAYI3AgEEMBwGCisGAQQBgjcCAQsxDjAMBgor
-# BgEEAYI3AgEVMC8GCSqGSIb3DQEJBDEiBCDkoxEF2OFMOA2nZn12O1eQOZzrg4Ix
-# EFds/4BnZSooXTANBgkqhkiG9w0BAQEFAASCAQBzxR3ygLaRFwP0fSS6XDu9iSwW
-# cHkk2z+D9awUlt6qg2jz7vfDo4Zy8tH2expp3DJ9auOK28srm4dx3zdAvLiSdfnS
-# LeH9zkeKH+Yr5ZFiYYYy0BdLcdHfD5IS8v434jy8zOesYf9GZn7i7ZxgU4qTlkpP
-# AfFrD+GeUvj5mEJSt4M66iGzVvt+F4KpJ8bc8Ct+qf7Up4krzA3Eu2P09fHiP/oj
-# dRZektUJYZCVbWCJwNWqOYsSO8dcJsnIqWGdKMKArzZftG0Q6ypveFniPtNAk+dy
-# Fu/+ePuXwpUE9a/55I7DlCgZ6dKAT8bRaVm1U2P7IPIbPsQ0aaatFKQUUousoYID
+# BgEEAYI3AgEVMC8GCSqGSIb3DQEJBDEiBCD9cRNOC+G4VWxUpUmWjn/wW7+MITaa
+# Eu0VZSPzSAk0GDANBgkqhkiG9w0BAQEFAASCAQA9KzHcQPySEgEto1hlXuVQiR7D
+# 8aT4q8R6DRfv5QyBrBpvxF8sCNffVOwlLDp4DCx5wXG+P42tS88aLyc098wGL1a2
+# u8OSmVCCEi5ZbgdAr6z/BJnoBTs+QoEqbfjs2LijHXr5onkVHYDolbqfThAGXlFU
+# m1UFuT7jO8wmj3V/YNTWs9Dpd9Db3xp0bkBIbg91pZhEKZukyMNlC1fMIREj7iQ/
+# 6rO8l+L8mJPe6OiofsPaWVlbdX9OX1At3uXmWq9gZU19QEoi9znK7Ps120SJ+Qhg
+# uz+KhxhB9WthuwwgAJMLL9F+wYN7hXQf1fXpM6rlZld+Suq3BeyTH+W1gGo9oYID
 # SzCCA0cGCSqGSIb3DQEJBjGCAzgwggM0AgEBMIGRMH0xCzAJBgNVBAYTAkdCMRsw
 # GQYDVQQIExJHcmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGDAW
 # BgNVBAoTD1NlY3RpZ28gTGltaXRlZDElMCMGA1UEAxMcU2VjdGlnbyBSU0EgVGlt
 # ZSBTdGFtcGluZyBDQQIQOUwl4XygbSeoZeI72R0i1DANBglghkgBZQMEAgIFAKB5
 # MBgGCSqGSIb3DQEJAzELBgkqhkiG9w0BBwEwHAYJKoZIhvcNAQkFMQ8XDTIzMDgy
-# OTA1NDIxOFowPwYJKoZIhvcNAQkEMTIEMANimEpeus1QOIb90jVp0OWtLx/vw354
-# PmSsjXWiity2AWBO4qGRIFclE0LupA014zANBgkqhkiG9w0BAQEFAASCAgAEUpL7
-# wi4qClAItbHroD6LeNJQYmFV2HSPT+GZhOhxFaHJpsa75O9BrOXaJcYFi1fQcoW2
-# KwEXnQpIBhHsAMcdPVhMw7wYHQg0bG0T72JU625n1wK0Ue/6FRdkYhwcwB22Y2Ko
-# HY5xzWgL6PM3LrKthOPLwwlTcoacV+Zw8zHFXIc9a5Tca7aWt1ze5UqKSGxA9Gh4
-# KEbSD8z15wbBVkXPkuiZv62PQHKklIzaATwDC33Vql0UH/SiZdJCGFtvhS4w1nt0
-# gLlSIR9SEMbkwLKzgHjpB08m4twlPaLHOJwFCavlJGanpHCquWs0bnTfZe7Hxt/g
-# 2n6/A5hdn6gB0Lcc2HgZRBQjQrerIo8fI24tfgMO0q/nZhGm1Nri44+bX/GIYA70
-# yzjK8J7vIq8M6/+JMEqp4q51AvbDRdGAjZTIDMuu3qS4XjNZePau3oQjXx5UCVQT
-# hwnRPhmRrt0FX+h7UOfS4CzUL1otuJY/Rn040+yPzv67eMGkBpKsYBGj0lak0sQF
-# iY3ZguwmMIq9VmTTcD3lkaVrKt+o2nXMudrlzLRSFvC3kcA02sNYghnMFdmElwrC
-# 5I80gnccDaKMJEGwY+etqasSFf1NW6OIsxxEF8MHHggztmQ+Pw6bTJ8W2312E3Io
-# hbCTYnhfXWaflAkTE5Iv7yhbzxucDglcB0lhfA==
+# OTA1NDM0M1owPwYJKoZIhvcNAQkEMTIEMGnc/Gbv6k7fHBNuuvX1beLgEtfkQESn
+# As+xsAQV2yDMokyJT+ESRVnu8s57kfwKBzANBgkqhkiG9w0BAQEFAASCAgAvFpeg
+# v2XA8OOM9/znHL/vkZ6gKDDaw3aNkYVwxI5hqYHe1x3rgtnReCt6VbwU0eWjALa7
+# N3LCHIVns3xqcGk8t0MnlVFVu8dRv6om+BxmKUgJTt3MzVQo/RB2pyQZiQ81hwCU
+# KkYQby/Tu9/bWlDPw4SELXtr34P3B9vdd5UoeJF9MhnsYVMxMG7JL2fvvvS9YiM3
+# /Om12OAWdnLcinMCueKlfvWvICiBDKxdCH8HxJNaGIfumazqur6DNW69FDdLYXDV
+# EK/Faa8qClJfzkmud5UrADGDoJjX9gQXKDyw9cnnfTz7YZcBZI4c/X+qeOi3GUTa
+# RmujxoTjsR8qm9ciz15SDcKS8p7oaRQzBjWLBGD12Mikmc1yqSMHRiH53LFLdPsi
+# NfKkxuHPLItSC4CbMggRgoc27PkmjdiSOwNWW37nM0Q+vHsdtlsYZl8CW6Bhc3FU
+# KLZNeNRAYrX8ryHKTgQQM3K/PnfQF2F08vMlY7C7jGDQ2N3dyQ9vT/M0tb2BtWnQ
+# FCHTGl4WxrDqWAKl49y0jV5SjRe5kIWeOqpNkWL3JNLhbAt+BbYsiq3ONAZoIo3i
+# gmknUgCnVyGUV+DF6Sr1iX1LROe9dGngFdEyY4akVgOdlHtr1O9Mpm765SL9XOpB
+# h+5YKgTLPp/xMApfrAlFxxT1rTFrFIGEqKUo/A==
 # SIG # End signature block

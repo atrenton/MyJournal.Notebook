@@ -5,6 +5,9 @@ namespace MyJournal.Notebook.Utils
     /// <summary>
     /// Implements Windows Management Instrumentation (WMI) helper methods.
     /// </summary>
+#if NETCOREAPP
+    [System.Runtime.Versioning.SupportedOSPlatform("windows")]
+#endif
     static class WMI
     {
         /// <summary>

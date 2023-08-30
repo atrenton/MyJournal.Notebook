@@ -8,9 +8,11 @@ namespace MyJournal.Notebook.API
     internal sealed class MessageFilter : IMessageFilter, IDisposable
     {
         [DllImport("ole32.dll")]
+        [DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
         private static extern int CoRegisterMessageFilter(IMessageFilter newFilter,
             out IMessageFilter oldFilter);
 
+        private bool _disposed;
         private bool _isRegistered;
         private IMessageFilter _oldFilter;
 
@@ -47,27 +49,28 @@ namespace MyJournal.Notebook.API
 
         #region IDisposable Members
 
-        void Dispose(bool disposing)
+        public void Dispose()
         {
-            if (disposing)
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        private void Dispose(bool disposing)
+        {
+            if (_disposed)
             {
-                /* Dispose managed resources */
+                return;
             }
 
-            // Dispose of unmanaged resources
-            Revoke();
+            if (disposing) // dispose of unmanaged resources
+            {
+                Tracer.WriteTraceMethodLine();
+                Revoke();
+            }
+            _disposed = true;
         }
 
-        void IDisposable.Dispose()
-        {
-            GC.SuppressFinalize(this);
-            Dispose(true);
-        }
-
-        ~MessageFilter()
-        {
-            Dispose(false);
-        }
+        ~MessageFilter() => Dispose();
 
         #endregion
 
@@ -77,7 +80,7 @@ namespace MyJournal.Notebook.API
             int dwTickCount, IntPtr lpInterfaceInfo) => (int)SERVERCALL.ISHANDLED;
 
 
-        // REF: https://docs.microsoft.com/en-us/windows/win32/api/objidl/nf-objidl-imessagefilter-retryrejectedcall
+        // REF: https://learn.microsoft.com/en-us/windows/win32/api/objidl/nf-objidl-imessagefilter-retryrejectedcall
         int IMessageFilter.RetryRejectedCall(IntPtr hTaskCallee, int dwTickCount,
             int dwRejectType)
         {

@@ -1,0 +1,27 @@
+﻿<Project>
+<!-- https://learn.microsoft.com/en-us/dotnet/core/project-sdk/msbuild-props#code-analysis-properties -->
+  <PropertyGroup Label="Code Analysis">
+    <AnalysisLevel>6-All</AnalysisLevel>
+    <CodeAnalysisTreatWarningsAsErrors>true</CodeAnalysisTreatWarningsAsErrors>
+    <EnableNETAnalyzers>true</EnableNETAnalyzers>
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+  </PropertyGroup>
+
+  <PropertyGroup Label="Build">
+<!-- https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/compiler-options/ -->
+    <Company>Art Trenton</Company>
+    <Deterministic>false</Deterministic>
+    <AssemblyVersion>16.4.*</AssemblyVersion>
+    <FileVersion>16.4.0.0</FileVersion>
+    <Version>16.4.0</Version>
+    <!--VersionPrefix>16.2.1</VersionPrefix-->
+    <!--VersionSuffix>beta</VersionSuffix-->
+    <LangVersion>10.0</LangVersion>
+    <Nullable>disable</Nullable>
+    <RepositoryType>Git</RepositoryType>
+    <RepositoryUrl>https://github.com/atrenton/MyJournal.Notebook</RepositoryUrl>
+    <RollForward>LatestMinor</RollForward>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <Year>$([System.DateTime]::Now.Year)</Year>
+  </PropertyGroup>
+</Project>
